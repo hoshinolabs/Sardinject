@@ -5,7 +5,7 @@
 
 The simple DI (Dependency Injection) for VRChat.
 
-- **実行時の処理負荷無し:** ほとんどの処理はエディタでビルド時に解決されるため、実行時に処理負荷がありません。
+- **実行時の処理負荷無し:** ほとんどの処理はエディタでビルド時に解決されるため実行時に処理負荷がありません。
 - **Udon上で実行可能:** 必要に応じてUdonランタイムで限定的に動作します。
 
 ## Features
@@ -81,8 +81,8 @@ public class Builder : IProcessSceneWithReport {
 }
 ```
 
-この例では、ゲームオブジェクトが自動的に作成され、コンポーネントが AddComponent され、 `StartupGreeting` クラスの sardine フィールドに `Sardine `クラスのインスタンスが自動的に設定されます。 
-これにより、インスペクタから複雑な設定を手動で触る必要がなくなります。 
+この例では、ゲームオブジェクトが自動的に作成され、コンポーネントが AddComponent され、 `StartupGreeting` クラスの sardine フィールドに `Sardine `クラスのインスタンスが自動的に設定されます。  
+これにより、インスペクタから複雑な設定を手動で触る必要がなくなります。  
 また、複雑なエディタ拡張を自分で作る必要もなくなります。
 
 ## Advanced Usage (dynamic resolve)
