@@ -1,0 +1,36 @@
+name: Trigger Repo Listing
+
+on: 
+  workflow_dispatch:
+  release:
+     types: [published, created, edited, unpublished, deleted, released]
+
+jobs:
+  
+  # Build the VPM Listing Website and deploy to GitHub Pages
+  build-listing:
+    name: build-listing
+    runs-on: ubuntu-latest
+    steps:
+      
+      # Create GitHub Apps token
+      - name: Create GitHub Apps token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      # Trigger repository listing
+      - name: Trigger repository listing
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'hoshinolabs-vrchat',
+              repo: 'template-package-listing',
+              workflow_id: 'build-listing.yml',
+              ref: 'main',
+            })
