@@ -1,0 +1,18 @@
+{
+  "name": "com.hoshinolabs.vrchat.sardinject",
+  "displayName": "Sardinject",
+  "version": "0.0.3",
+  "unity": "2022.3",
+  "description": "The simple DI (Dependency Injection) for VRChat",
+  "vrchatVersion": "2022.1.1",
+  "author": {
+    "name": "ikuko",
+    "email": "magi.ikuko@gmail.com",
+    "url": "https://hoshinolabs.com"
+  },
+  "dependencies": {
+  },
+  "vpmDependencies": {
+    "com.vrchat.worlds": ">=3.5.0"
+  }
+}
