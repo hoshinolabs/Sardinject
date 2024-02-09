@@ -5,13 +5,11 @@
 
 The simple DI (Dependency Injection) for VRChat.
 
-- **実行時の処理負荷無し:** ほとんどの処理はビルド時に解決されるため実行時に処理負荷がありません。
-- **Udon上で実行可能:** 必要に応じてUdonランタイムで限定的に動作します。
+- **実行時の処理負荷無し:** ほとんどの処理はビルド時に解決され実行時に処理負荷がありません。
+- **Udon上で実行可能:** Udonランタイムでも機能を限定して動作します。
 
 ## Features
 
-- 柔軟なスコーピング設定
-  - ヒエラルキ/コードによるスコープ
 - IDパラメータ付きの注入
 - 複数インスタンスの解決
 
@@ -73,10 +71,12 @@ public class Builder : IProcessSceneWithReport {
   public int callbackOrder => 0;
 
   public void OnProcessScene(Scene scene, BuildReport report) {
-    var builder = new ContainerBuilder();
-    builder.AddOnNewGameObject<Sardine>();
-    builder.AddOnNewGameObject<StartupGreeting>();
-    builder.Build();
+    var context = RootContext.CreateChild();
+    context.Push(builder => {
+      builder.AddOnNewGameObject<Sardine>(Lifetime.Cached);
+      builder.AddOnNewGameObject<StartupGreeting>(Lifetime.Cached);
+    });
+    context.Build();
   }
 }
 ```
@@ -92,7 +92,7 @@ public class Builder : IProcessSceneWithReport {
 ```csharp
 public class StartupGreeting : UdonSharpBehaviour {
   [Inject, SerializeField, HideInInspector]
-  Container container;
+  UdonContainer container;
 
   private void Start() {
     var sardine = (Sardine)container.Resolve(GetUdonTypeName<Sardine>());
@@ -108,9 +108,11 @@ public class Builder : IProcessSceneWithReport {
   public int callbackOrder => 0;
 
   public void OnProcessScene(Scene scene, BuildReport report) {
-    BuildContext.Push(builder => {
+    var context = RootContext.CreateChild();
+    context.Push(builder => {
       builder.AddInHierarchy<Sardine>();
     });
+    context.Build();
   }
 }
 ```
@@ -132,7 +134,7 @@ namespace SomeonePackage {
     public int callbackOrder => 0;
 
     public void OnProcessScene(Scene scene, BuildReport report) {
-      BuildContext.Push(builder => {
+      RootContext.Push(builder => {
         builder.AddInHierarchy<SomeoneSardine>();
       });
     }
@@ -159,7 +161,7 @@ namespace MyPackage {
     public int callbackOrder => 0;
 
     public void OnProcessScene(Scene scene, BuildReport report) {
-      BuildContext.Push(builder => {
+      RootContext.Push(builder => {
         builder.AddInHierarchy<MySardine>();
       });
     }
