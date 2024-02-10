@@ -48,7 +48,14 @@ jobs:
         with: 
             file_path: "${{ env.packagePath }}/package.json"
             prop_path: "version"
-    
+
+      # Copy required files
+      - name: Copy Required Files
+        run: |
+          cp -f README.md Packages/com.hoshinolabs.vrchat.sardinject/
+          cp -f README_en.md Packages/com.hoshinolabs.vrchat.sardinject/
+          cp -f LICENSE Packages/com.hoshinolabs.vrchat.sardinject/
+      
       # Configure the Environment Variables needed for releasing the Package
       - name: Set Environment Variables
         run: |

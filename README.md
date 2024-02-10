@@ -81,7 +81,7 @@ public class Builder : IProcessSceneWithReport {
 }
 ```
 
-この例では、ゲームオブジェクトが自動的に作成され、コンポーネントが AddComponent され、 `StartupGreeting` クラスの sardine フィールドに `Sardine `クラスのインスタンスが自動的に設定されます。  
+この例では、ゲームオブジェクトが自動的に作成され、コンポーネントが AddComponent され、 `StartupGreeting` クラスの sardine フィールドに `Sardine` クラスのインスタンスが自動的に設定されます。  
 これにより、インスペクタから複雑な設定を手動で触る必要がなくなります。  
 また、複雑なエディタ拡張を自分で作る必要もなくなります。
 
