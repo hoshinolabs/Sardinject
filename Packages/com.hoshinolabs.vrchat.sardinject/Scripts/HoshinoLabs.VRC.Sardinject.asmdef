@@ -1,0 +1,16 @@
+{
+    "name": "HoshinoLabs.VRC.Sardinject",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2ad67d537eb31b341abf744274a81ecd"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
