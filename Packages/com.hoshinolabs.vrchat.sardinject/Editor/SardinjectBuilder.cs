@@ -36,7 +36,6 @@ namespace HoshinoLabs.VRC.Sardinject {
 
             var containerGo = new GameObject($"__{typeof(Udon.UdonContainer).Name}_{scope.GetHashCode():x8}__");
             containerGo.transform.SetParent(go.transform);
-            go.hideFlags = HideFlags.HideAndDontSave;
 
             udon = containerGo.AddUdonSharpComponentEx<Udon.UdonContainer>(false);
 

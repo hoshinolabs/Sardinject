@@ -35,13 +35,18 @@ namespace HoshinoLabs.VRC.Sardinject {
         }
 
         Registry BuildRegistry() {
-            var registrations = registrationBuilders
-                .Select(registrationBuilder => registrationBuilder.Build())
-                .ToArray();
-            ArrayUtility.Insert(ref registrations, 0, CreateContainerRegistration());
+            var registrations = BuildRegistrations();
             var registry = new Registry(registrations);
             DetectsCircularDependencies(registrations, registry);
             return registry;
+        }
+
+        Registration[] BuildRegistrations() {
+            var registrations = registrationBuilders
+                .Select(registrationBuilder => registrationBuilder.Build())
+                .ToList();
+            registrations.Insert(0, CreateContainerRegistration());
+            return registrations.ToArray();
         }
 
         Registration CreateContainerRegistration() {
