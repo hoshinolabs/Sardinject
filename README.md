@@ -47,7 +47,7 @@ vpm add com.hoshinolabs.vrchat.sardinject
 
 ```csharp
 public class Sardine : UdonSharpBehaviour {
-  public Hello() {
+  public void Hello() {
     Debug.Log($"Hello. Do you like sardines?");
   }
 }

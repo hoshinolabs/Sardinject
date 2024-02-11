@@ -1,5 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UdonSharp;
+#if UNITY_EDITOR
+using UdonSharpEditor;
+#endif
 using UnityEngine;
 
 namespace HoshinoLabs.VRC.Sardinject {
@@ -20,7 +24,13 @@ namespace HoshinoLabs.VRC.Sardinject {
             if(getTransform != null) {
                 go.transform.SetParent(getTransform());
             }
+#if UNITY_EDITOR
+            var instance = typeof(UdonSharpBehaviour).IsAssignableFrom(implementationType)
+                ? go.AddUdonSharpComponentEx(implementationType, false)
+                : go.AddComponent(implementationType);
+#else
             var instance = go.AddComponent(implementationType);
+#endif
             injector.Inject(instance, container, parameters);
             instance.gameObject.SetActive(true);
             return instance;

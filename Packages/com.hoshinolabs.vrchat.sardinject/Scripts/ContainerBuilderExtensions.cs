@@ -32,7 +32,6 @@ namespace HoshinoLabs.VRC.Sardinject {
             var provider = new FindInstanceProvider();
             var builder = new RegistrationBuilder(type, Lifetime.Cached, provider);
             self.OnBuild += container => {
-                Debug.Log("AddInHierarchy " + type + " OnBuild=" + (builder.InterfaceTypes.FirstOrDefault() ?? builder.ImplementationType));
                 container.Resolve(builder.InterfaceTypes.FirstOrDefault() ?? builder.ImplementationType);
             };
             return self.Register(builder);
@@ -84,6 +83,9 @@ namespace HoshinoLabs.VRC.Sardinject {
         public static RegistrationBuilder AddOnNewGameObject(this ContainerBuilder self, Type type, Lifetime lifetime, string gameObjectName = null) {
             var provider = new NewGameObjectInstanceProvider(gameObjectName);
             var builder = new RegistrationBuilder(type, lifetime, provider);
+            self.OnBuild += container => {
+                container.Resolve(type);
+            };
             return self.Register(builder);
         }
 
