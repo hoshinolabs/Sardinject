@@ -4,36 +4,45 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoshinoLabs.VRC.Sardinject {
-    public sealed class Context : IContext {
-        Context parent;
+    public sealed class Context {
+        Context upper;
+        Resolver resolver;
+
+        RegistrationCache registrationCache = new RegistrationCache();
+        ResolverCache resolverCache = new ResolverCache();
 
         Container container;
+
         public Container Container => container;
 
         List<Installer> installers = new List<Installer>();
 
-        public void Build(Func<Type, Container, object> fallbackResolver = null) {
-            parent?.Build(fallbackResolver);
+        public Context(Resolver resolver = null) {
+            this.resolver = resolver;
+        }
 
-            var builder = new ContainerBuilder();
+        public Context New(Resolver resolver = null) {
+            var context = new Context();
+            context.upper = this;
+            context.resolver = this.resolver + resolver;
+            return context;
+        }
+
+        public void Build() {
+            upper?.Build();
+            var builder = new ContainerBuilder(upper?.container, resolver, registrationCache, resolverCache);
             builder.OnBuild += container => {
                 this.container = container;
             };
             InstallTo(builder);
-            builder.Build(parent?.Container, fallbackResolver);
+            builder.Build();
         }
 
-        public Context CreateChild() {
-            var context = new Context();
-            context.parent = this;
-            return context;
-        }
-
-        public void Push(Action<ContainerBuilder> configuration) {
+        public void Enqueue(Action<IContainerBuilder> configuration) {
             installers.Add(new Installer(configuration));
         }
 
-        void InstallTo(ContainerBuilder builder) {
+        void InstallTo(IContainerBuilder builder) {
             foreach (var installer in installers) {
                 installer.Install(builder);
             }

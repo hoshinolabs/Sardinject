@@ -7,8 +7,12 @@ using UnityEngine;
 
 namespace HoshinoLabs.VRC.Sardinject {
     internal static class InjectTypeInfoCache {
-        // todo: DomainReloadÇ™ì¸ÇÁÇ»Ç¢èÍçáê≥ÇµÇ≠ìÆÇ≠Ç©óvämîF
-        static Dictionary<Type, InjectTypeInfo> cache = new Dictionary<Type, InjectTypeInfo>();
+        static Dictionary<Type, InjectTypeInfo> cache;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Init() {
+            cache = new Dictionary<Type, InjectTypeInfo>();
+        }
 
         public static bool TryGet(Type type, out InjectTypeInfo value) {
             return cache.TryGetValue(type, out value);

@@ -5,8 +5,12 @@ using UnityEngine;
 
 namespace HoshinoLabs.VRC.Sardinject {
     public static class InjectorCache {
-        // todo: DomainReloadÇ™ì¸ÇÁÇ»Ç¢èÍçáê≥ÇµÇ≠ìÆÇ≠Ç©óvämîF
-        static Dictionary<Type, Injector> cache = new Dictionary<Type, Injector>();
+        static Dictionary<Type, Injector> cache;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Init() {
+            cache = new Dictionary<Type, Injector>();
+        }
 
         public static bool TryGet(Type type, out Injector value) {
             return cache.TryGetValue(type, out value);

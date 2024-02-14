@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UdonSharp;
 using UnityEngine;
 
 namespace HoshinoLabs.VRC.Sardinject {
@@ -49,7 +51,8 @@ namespace HoshinoLabs.VRC.Sardinject {
         }
 
         public RegistrationBuilder AsImplementedInterfaces() {
-            foreach (var interfaceType in implementationType.GetInterfaces()) {
+            foreach (var interfaceType in implementationType.GetInterfaces()
+                .Where(x => !typeof(UdonSharpBehaviour).IsAssignableFrom(x))) {
                 interfaceTypes.Add(interfaceType);
             }
             return this;

@@ -12,22 +12,28 @@ using UnityEngine.SceneManagement;
 using VRC.SDK3.Data;
 
 namespace HoshinoLabs.VRC.Sardinject {
-    internal class SardinjectBuilder : IProcessSceneWithReport {
+    internal sealed class SardinjectBuilder : IProcessSceneWithReport {
         public int callbackOrder => 1;
 
-        GameObject go;
-        Dictionary<Container, Udon.UdonContainer> cache = new Dictionary<Container, Udon.UdonContainer>();
+        static GameObject go;
+        static Dictionary<Container, Udon.UdonContainer> cache;
 
-        GameObject GetOrBuildGO() {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Init() {
+            go = null;
+            cache = new Dictionary<Container, Udon.UdonContainer>();
+        }
+
+        static GameObject GetOrBuildGO() {
             if (go == null) {
-                go = new GameObject($"__{GetType().Namespace.Replace('.', '_')}__");
-                go.hideFlags = HideFlags.HideAndDontSave;
+                go = new GameObject($"__{typeof(SardinjectBuilder).Namespace.Replace('.', '_')}__");
+                //go.hideFlags = HideFlags.HideAndDontSave;
             }
 
             return go;
         }
 
-        Udon.UdonContainer GetOrBuildContainerUdon(Container scope) {
+        static Udon.UdonContainer GetOrBuildContainerUdon(Container scope) {
             if (cache.TryGetValue(scope, out var udon)) {
                 return udon;
             }
@@ -44,14 +50,16 @@ namespace HoshinoLabs.VRC.Sardinject {
             return udon;
         }
 
+        internal static object FallbackResolver(Type type, Container scope) {
+            if (typeof(Udon.UdonContainer).IsAssignableFrom(type)) {
+                return GetOrBuildContainerUdon(scope);
+            }
+            return null;
+        }
+
         public void OnProcessScene(Scene scene, BuildReport report) {
             try {
-                RootContextHelper.Instance.Build((Type type, Container scope) => {
-                    if (typeof(Udon.UdonContainer).IsAssignableFrom(type)) {
-                        return GetOrBuildContainerUdon(scope);
-                    }
-                    return null;
-                });
+                ProjectContextHelper.Instance.Build();
             }
             catch (SardinjectException e) {
                 EditorApplication.isPlaying = false;

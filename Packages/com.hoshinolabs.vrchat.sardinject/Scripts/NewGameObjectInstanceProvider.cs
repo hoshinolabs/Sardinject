@@ -21,7 +21,7 @@ namespace HoshinoLabs.VRC.Sardinject {
             var name = string.IsNullOrEmpty(gameObjectName) ? implementationType.Name : gameObjectName;
             var go = new GameObject(name);
             go.SetActive(false);
-            if(getTransform != null) {
+            if (getTransform != null) {
                 go.transform.SetParent(getTransform());
             }
 #if UNITY_EDITOR

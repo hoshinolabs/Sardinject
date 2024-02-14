@@ -7,10 +7,10 @@ using UnityEngine.SceneManagement;
 
 namespace HoshinoLabs.VRC.Sardinject {
     internal sealed class SardinjectPreBuilder : IProcessSceneWithReport {
-        public int callbackOrder => -100;
+        public int callbackOrder => -5000;
 
         public void OnProcessScene(Scene scene, BuildReport report) {
-            RootContextHelper.Instance = new Context();
+            ProjectContextHelper.Instance = new Context(SardinjectBuilder.FallbackResolver);
         }
     }
 }

@@ -2,34 +2,42 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace HoshinoLabs.VRC.Sardinject {
-    public sealed class ContainerBuilder {
+    internal sealed class ContainerBuilder : IContainerBuilder {
         Action<Container> onBuild;
         public event Action<Container> OnBuild {
             add => onBuild += value;
             remove => onBuild -= value;
         }
 
-        List<RegistrationBuilder> registrationBuilders = new List<RegistrationBuilder>();
+        Container upper;
+        Resolver resolver;
+        RegistrationCache registrationCache;
+        ResolverCache resolverCache;
 
-        public ContainerBuilder() {
+        public ContainerBuilder(Resolver resolver = null) {
+            this.resolver = resolver;
         }
+
+        internal ContainerBuilder(Container upper, Resolver resolver, RegistrationCache registrationCache, ResolverCache resolverCache) {
+            this.upper = upper;
+            this.resolver = resolver;
+            this.registrationCache = registrationCache;
+            this.resolverCache = resolverCache;
+        }
+
+        List<RegistrationBuilder> registrationBuilders = new List<RegistrationBuilder>();
 
         public RegistrationBuilder Register(RegistrationBuilder registrationBuilder) {
             registrationBuilders.Add(registrationBuilder);
             return registrationBuilder;
         }
 
-        public Container Build(Func<Type, Container, object> fallbackResolver = null) {
-            return Build(null, fallbackResolver);
-        }
-
-        internal Container Build(Container parent, Func<Type, Container, object> fallbackResolver) {
+        public Container Build() {
             var registry = BuildRegistry();
-            var container = new Container(parent, registry, fallbackResolver);
+            var container = new Container(upper, registry, resolverCache, resolver);
             onBuild(container);
             return container;
         }
@@ -42,17 +50,19 @@ namespace HoshinoLabs.VRC.Sardinject {
         }
 
         Registration[] BuildRegistrations() {
-            var registrations = registrationBuilders
-                .Select(registrationBuilder => registrationBuilder.Build())
-                .ToList();
-            registrations.Insert(0, CreateContainerRegistration());
-            return registrations.ToArray();
+            foreach (var registration in registrationBuilders
+                .Select(registrationBuilder => registrationBuilder.Build())) {
+                registrationCache.Add(registration);
+            }
+
+            var registrations = new[] { BuildContainerRegistration() };
+            return registrations.Concat(registrationCache.GetRegistrations()).ToArray();
         }
 
-        Registration CreateContainerRegistration() {
+        Registration BuildContainerRegistration() {
             var interfaceTypes = new HashSet<Type>(typeof(Container).GetInterfaces());
             var provider = new ContainerProvider();
-            return new Registration(typeof(Container), Lifetime.Cached, interfaceTypes, provider);
+            return new Registration(typeof(Container), Lifetime.Scoped, interfaceTypes, provider);
         }
 
         void DetectsCircularDependencies(Registration[] registrations, Registry registry) {

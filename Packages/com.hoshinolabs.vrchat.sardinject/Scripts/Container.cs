@@ -1,53 +1,58 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace HoshinoLabs.VRC.Sardinject {
     public sealed class Container {
-        Container parent;
+        Container upper;
         Registry registry;
-        Func<Type, Container, object> fallbackResolver;
+        ResolverCache cache;
+        Resolver resolver;
 
-        Dictionary<Registration, Lazy<object>> cache = new Dictionary<Registration, Lazy<object>>();
-
+        internal ResolverCache Cache => cache;
         public Registry Registry => registry;
 
-        internal Container(Container parent, Registry registry, Func<Type, Container, object> fallbackResolver) {
-            this.parent = parent;
+        internal Container(Container upper, Registry registry, ResolverCache cache, Resolver resolver) {
+            this.upper = upper;
             this.registry = registry;
-            this.fallbackResolver = fallbackResolver;
+            this.cache = cache;
+            this.resolver = resolver;
         }
 
         public object Resolve(Type type) {
-            return Resolve(type, this);
-        }
-
-        object Resolve(Type type, Container scope) {
-            if (registry.TryGet(type, out var registration)) {
-                return Resolve(registration, scope);
+            if (TryGetRegistration(type, out var registration)) {
+                return Resolve(registration);
             }
-            return FallbackResolve(type, scope);
+            if(resolver != null) {
+                foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
+                    var instance = x(type, this);
+                    if (instance != null) {
+                        return instance;
+                    }
+                }
+            }
+            throw SardinjectException.CreateUnableResolve(type);
         }
 
-        object Resolve(Registration registration, Container scope) {
+        object Resolve(Registration registration) {
             switch (registration.Lifetime) {
                 case Lifetime.Transient: {
+                        // 自分で作る(毎回)
                         return registration.GetInstance(this);
                     }
                 case Lifetime.Cached: {
-                        if (!cache.TryGetValue(registration, out var value)) {
-                            value = new(() => registration.GetInstance(this));
-                            cache.Add(registration, value);
+                        // 自分に登録がなかったら親に任せる
+                        if (!registry.Exists(registration.ImplementationType)) {
+                            upper.Resolve(registration);
                         }
-                        return value.Value;
+                        // 自分で作る(キャッシュ)
+                        return cache.GetOrAdd(registration, this).Value;
                     }
                 case Lifetime.Scoped: {
-                        if (!scope.cache.TryGetValue(registration, out var value)) {
-                            value = new(() => registration.GetInstance(this));
-                            scope.cache.Add(registration, value);
-                        }
-                        return value.Value;
+                        // 自分で作る(キャッシュ)
+                        return cache.GetOrAdd(registration, this).Value;
                     }
                 default: {
                         return registration.GetInstance(this);
@@ -55,21 +60,19 @@ namespace HoshinoLabs.VRC.Sardinject {
             }
         }
 
-        object FallbackResolve(Type type, Container scope) {
-            if (parent != null) {
-                return parent.Resolve(type, scope);
+        bool TryGetRegistration(Type type, out Registration registration) {
+            if (registry.TryGet(type, out registration)) {
+                return true;
             }
-            if (fallbackResolver != null) {
-                var value = fallbackResolver(type, scope);
-                if (value != null) {
-                    return value;
-                }
+            if (upper != null) {
+                return upper.TryGetRegistration(type, out registration);
             }
-            throw SardinjectException.CreateUnableResolve(type);
+            return false;
         }
 
         public void Inject(object instance) {
-            throw new NotImplementedException();
+            var injector = InjectorCache.GetOrAdd(instance.GetType());
+            injector.Inject(instance, this, null);
         }
     }
 }

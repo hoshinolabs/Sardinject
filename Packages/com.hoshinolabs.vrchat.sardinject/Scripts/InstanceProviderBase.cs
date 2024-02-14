@@ -8,7 +8,10 @@ namespace HoshinoLabs.VRC.Sardinject {
         protected Hashtable parameters = new Hashtable();
         public Hashtable Parameters => parameters;
         protected Func<Transform> getTransform;
-        public Func<Transform> GetTransform;
+        public Func<Transform> GetTransform {
+            get => getTransform;
+            set => getTransform = value;
+        }
 
         protected Injector injector;
         protected Type implementationType;

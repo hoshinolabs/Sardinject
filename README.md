@@ -15,7 +15,7 @@ The simple DI (Dependency Injection) for VRChat.
 
 ## Documentation
 
-View on [GitHub Pages](https://sardinject.github.io)
+~~View on [GitHub Pages](https://sardinject.github.io)~~
 
 ## Installation
 
@@ -39,7 +39,7 @@ vpm add com.hoshinolabs.vrchat.sardinject
 ### Install manually (using .unitypackage)
 
 1. Download the .unitypackage from [releases](https://github.com/hoshinolabs-vrchat/Sardinject/releases) page.
-2. Open com.hoshinolabs.vrchat.sardinject-vx.x.x.unitypackage
+2. Open .unitypackage
 
 ## Basic Usage
 
@@ -71,10 +71,12 @@ public class Builder : IProcessSceneWithReport {
   public int callbackOrder => 0;
 
   public void OnProcessScene(Scene scene, BuildReport report) {
-    var context = RootContext.CreateChild();
-    context.Push(builder => {
+    var context = new Context();
+    context.Enqueue(builder => {
       builder.AddOnNewGameObject<Sardine>(Lifetime.Cached);
       builder.AddOnNewGameObject<StartupGreeting>(Lifetime.Cached);
+
+      builder.AddEntryPoint<StartupGreeting>();
     });
     context.Build();
   }
@@ -88,6 +90,14 @@ public class Builder : IProcessSceneWithReport {
 ## Advanced Usage (dynamic resolve)
 
 以下のようにして、型からインスタンスを動的に解決することができます。
+
+```csharp
+public class Sardine : UdonSharpBehaviour {
+  public void Hello() {
+    Debug.Log($"Hello. Do you like sardines?");
+  }
+}
+```
 
 ```csharp
 public class StartupGreeting : UdonSharpBehaviour {
@@ -108,9 +118,12 @@ public class Builder : IProcessSceneWithReport {
   public int callbackOrder => 0;
 
   public void OnProcessScene(Scene scene, BuildReport report) {
-    var context = RootContext.CreateChild();
-    context.Push(builder => {
-      builder.AddInHierarchy<Sardine>();
+    var context = new Context();
+    context.Enqueue(builder => {
+      builder.AddOnNewGameObject<Sardine>(Lifetime.Cached);
+      builder.AddOnNewGameObject<StartupGreeting>(Lifetime.Cached);
+
+      builder.AddEntryPoint<StartupGreeting>();
     });
     context.Build();
   }
@@ -134,7 +147,7 @@ namespace SomeonePackage {
     public int callbackOrder => 0;
 
     public void OnProcessScene(Scene scene, BuildReport report) {
-      RootContext.Push(builder => {
+      ProjectContext.Enqueue(builder => {
         builder.AddInHierarchy<SomeoneSardine>();
       });
     }
@@ -161,9 +174,11 @@ namespace MyPackage {
     public int callbackOrder => 0;
 
     public void OnProcessScene(Scene scene, BuildReport report) {
-      RootContext.Push(builder => {
+      var context = ProjectContext.New();
+      context.Enqueue(builder => {
         builder.AddInHierarchy<MySardine>();
       });
+      context.Build();
     }
   }
 #endif
@@ -193,20 +208,20 @@ public class BuildDateKeeper : UdonSharpBehaviour {
     builddate = DateTime.Now.ToString();
   }
 #endif
-}
-```
 
-依存関係を記述したエディタスクリプトを作成します。
+#if UNITY_EDITOR
+  public class Builder : IProcessSceneWithReport {
+    public int callbackOrder => 0;
 
-```csharp
-public class Builder : IProcessSceneWithReport {
-  public int callbackOrder => 0;
-
-  public void OnProcessScene(Scene scene, BuildReport report) {
-    var builder = new ContainerBuilder();
-    builder.AddOnNewGameObject<BuildDateKeeper>();
-    builder.Build();
+    public void OnProcessScene(Scene scene, BuildReport report) {
+      var context = new Context();
+      context.Enqueue(builder => {
+        builder.AddInHierarchy<BuildDateKeeper>();
+      });
+      context.Build();
+    }
   }
+#endif
 }
 ```
 
