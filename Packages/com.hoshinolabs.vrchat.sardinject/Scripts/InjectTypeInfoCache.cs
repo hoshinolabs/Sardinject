@@ -4,10 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+#if UNITY_EDITOR
+using VRC.SDKBase.Editor.BuildPipeline;
+#endif
 
 namespace HoshinoLabs.VRC.Sardinject {
     internal static class InjectTypeInfoCache {
         static Dictionary<Type, InjectTypeInfo> cache;
+
+#if UNITY_EDITOR
+        internal class BuildInitializer : IVRCSDKBuildRequestedCallback {
+            public int callbackOrder => 0;
+
+            public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType) {
+                Init();
+                return true;
+            }
+        }
+#endif
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void Init() {

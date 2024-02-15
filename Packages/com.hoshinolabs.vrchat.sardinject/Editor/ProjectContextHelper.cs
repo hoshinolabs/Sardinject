@@ -7,6 +7,7 @@ using UdonSharp;
 using UdonSharpEditor;
 using UnityEngine;
 using VRC.SDK3.Data;
+using VRC.SDKBase.Editor.BuildPipeline;
 
 namespace HoshinoLabs.VRC.Sardinject {
     internal static class ProjectContextHelper {
@@ -21,6 +22,15 @@ namespace HoshinoLabs.VRC.Sardinject {
             set {
                 var instance = typeof(ProjectContext).GetField("instance", BindingFlags.Static | BindingFlags.NonPublic);
                 instance.SetValue(null, value);
+            }
+        }
+
+        internal class BuildInitializer : IVRCSDKBuildRequestedCallback {
+            public int callbackOrder => 0;
+
+            public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType) {
+                Init();
+                return true;
             }
         }
 
