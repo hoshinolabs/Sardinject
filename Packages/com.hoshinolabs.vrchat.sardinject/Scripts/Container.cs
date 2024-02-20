@@ -39,19 +39,15 @@ namespace HoshinoLabs.VRC.Sardinject {
         object Resolve(Registration registration) {
             switch (registration.Lifetime) {
                 case Lifetime.Transient: {
-                        // 自分で作る(毎回)
                         return registration.GetInstance(this);
                     }
                 case Lifetime.Cached: {
-                        // 自分に登録がなかったら親に任せる
                         if (!registry.Exists(registration.ImplementationType)) {
                             upper.Resolve(registration);
                         }
-                        // 自分で作る(キャッシュ)
                         return cache.GetOrAdd(registration, this).Value;
                     }
                 case Lifetime.Scoped: {
-                        // 自分で作る(キャッシュ)
                         return cache.GetOrAdd(registration, this).Value;
                     }
                 default: {

@@ -19,24 +19,39 @@ namespace HoshinoLabs.VRC.Sardinject {
 
         void InjectFields(object instance, Container container, Hashtable parameters) {
             foreach (var field in info.Fields) {
-                var value = container.ResolveWithParameters(field.FieldType, field.Name, parameters);
-                field.SetValue(instance, value);
+                try {
+                    var value = container.ResolveWithParameters(field.FieldType, field.Name, parameters);
+                    field.SetValue(instance, value);
+                }
+                catch(SardinjectException) {
+                    throw SardinjectException.CreateUnableResolveField(field.FieldType, field.Name);
+                }
             }
         }
 
         void InjectProperties(object instance, Container container, Hashtable parameters) {
             foreach (var property in info.Properties) {
-                var value = container.ResolveWithParameters(property.PropertyType, property.Name, parameters);
-                property.SetValue(instance, value);
+                try {
+                    var value = container.ResolveWithParameters(property.PropertyType, property.Name, parameters);
+                    property.SetValue(instance, value);
+                }
+                catch (SardinjectException) {
+                    throw SardinjectException.CreateUnableResolveProperty(property.PropertyType, property.Name);
+                }
             }
         }
 
         void InjectMethods(object instance, Container container, Hashtable parameters) {
             foreach (var method in info.Methods) {
-                var values = method.GetParameters()
-                    .Select(x => container.ResolveWithParameters(x.ParameterType, x.Name, parameters))
-                    .ToArray();
-                method.Invoke(instance, values);
+                try {
+                    var values = method.GetParameters()
+                        .Select(x => container.ResolveWithParameters(x.ParameterType, x.Name, parameters))
+                        .ToArray();
+                    method.Invoke(instance, values);
+                }
+                catch (SardinjectException) {
+                    throw SardinjectException.CreateUnableResolveMethod(method.Name);
+                }
             }
         }
     }

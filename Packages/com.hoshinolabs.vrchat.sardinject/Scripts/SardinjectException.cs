@@ -14,6 +14,18 @@ namespace HoshinoLabs.VRC.Sardinject {
             return new SardinjectException($"Unable to resolve for type `{type}`.");
         }
 
+        internal static SardinjectException CreateUnableResolveField(Type type, string name) {
+            return new SardinjectException($"Unable to resolve field for type `{type}` with name `{name}`.");
+        }
+
+        internal static SardinjectException CreateUnableResolveProperty(Type type, string name) {
+            return new SardinjectException($"Unable to resolve property for type `{type}` with name `{name}`.");
+        }
+
+        internal static SardinjectException CreateUnableResolveMethod(string name) {
+            return new SardinjectException($"Unable to resolve method for name `{name}`.");
+        }
+
         internal static SardinjectException CreateCircularDependency(IEnumerable<ReferenceInfo> stack) {
             var messages = stack
                 .Reverse()
