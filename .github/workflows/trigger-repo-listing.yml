@@ -30,7 +30,7 @@ jobs:
           script: |
             await github.rest.actions.createWorkflowDispatch({
               owner: 'hoshinolabs-vrchat',
-              repo: 'template-package-listing',
+              repo: 'com.hoshinolabs.vpm',
               workflow_id: 'build-listing.yml',
               ref: 'main',
             })
