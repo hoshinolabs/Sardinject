@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     internal sealed class ResolverCache {
         Dictionary<Registration, Lazy<object>> cache = new Dictionary<Registration, Lazy<object>>();
 

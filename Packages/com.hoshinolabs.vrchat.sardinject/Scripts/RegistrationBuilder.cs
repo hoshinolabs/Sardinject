@@ -5,8 +5,8 @@ using System.Linq;
 using UdonSharp;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
-    public class RegistrationBuilder {
+namespace HoshinoLabs.Sardinject {
+    public sealed class RegistrationBuilder {
         Type implementationType;
         Lifetime lifetime;
         InstanceProviderBase provider;

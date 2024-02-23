@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     public static class ContainerBuilderExtensions {
         /// <summary>
         /// Add entry point by type

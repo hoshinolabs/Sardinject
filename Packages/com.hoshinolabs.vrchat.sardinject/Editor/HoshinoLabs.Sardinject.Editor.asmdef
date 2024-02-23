@@ -1,5 +1,5 @@
 {
-    "name": "HoshinoLabs.VRC.Sardinject.Editor",
+    "name": "HoshinoLabs.Sardinject.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:6490804aa441dfe4b88eb56cccbdf081",

@@ -2,12 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
-    internal sealed class ContainerProvider : InstanceProviderBase {
-        internal ContainerProvider() {
-
-        }
-
+namespace HoshinoLabs.Sardinject {
+    internal sealed class ContainerInstanceProvider : InstanceProviderBase {
         public override bool IsRaw => true;
         public override bool IsPrefab => false;
 

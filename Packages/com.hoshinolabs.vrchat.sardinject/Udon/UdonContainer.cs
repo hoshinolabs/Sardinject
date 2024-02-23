@@ -5,10 +5,10 @@ using VRC.SDK3.Data;
 using VRC.SDKBase;
 using VRC.Udon;
 
-namespace HoshinoLabs.VRC.Sardinject.Udon {
+namespace HoshinoLabs.Sardinject {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     [AddComponentMenu("")]
-    public class UdonContainer : UdonSharpBehaviour {
+    internal sealed class UdonContainer : Udon.IContainer {
         [SerializeField, HideInInspector]
         string[] _0;
         [SerializeField, HideInInspector]
@@ -21,7 +21,7 @@ namespace HoshinoLabs.VRC.Sardinject.Udon {
         [SerializeField, HideInInspector]
         DataDictionary cache;
 
-        public object Resolve(string type) {
+        public override object Resolve(string type) {
             var idx = Array.IndexOf(_0, type);
             if (idx < 0) {
                 Debug.LogError($"[<color=#47F1FF>Sardinject</color>] Unable to resolve for type `{type}`.");
@@ -61,11 +61,11 @@ namespace HoshinoLabs.VRC.Sardinject.Udon {
             }
         }
 
-        public object Resolve(Type type) {
+        public override object Resolve(Type type) {
             return Resolve(type.ToString());
         }
 
-        public void Inject(object instance) {
+        public override void Inject(object instance) {
             Debug.LogError($"[<color=#47F1FF>Sardinject</color>] Not implemented");
         }
     }

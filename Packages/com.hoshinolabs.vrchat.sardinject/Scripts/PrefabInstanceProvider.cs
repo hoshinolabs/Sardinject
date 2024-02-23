@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     internal sealed class PrefabInstanceProvider : InstanceProviderBase {
         GameObject prefab;
 

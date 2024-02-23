@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     public sealed class Context {
         Context upper;
         Resolver resolver;

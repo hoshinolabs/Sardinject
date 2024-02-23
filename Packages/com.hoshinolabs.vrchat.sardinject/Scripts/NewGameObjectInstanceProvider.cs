@@ -6,7 +6,7 @@ using UdonSharpEditor;
 #endif
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     internal sealed class NewGameObjectInstanceProvider : InstanceProviderBase {
         string gameObjectName;
 

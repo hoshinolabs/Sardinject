@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
-    public abstract class InstanceProviderBase {
+namespace HoshinoLabs.Sardinject {
+    internal abstract class InstanceProviderBase {
         protected Hashtable parameters = new Hashtable();
         public Hashtable Parameters => parameters;
         protected Func<Transform> getTransform;

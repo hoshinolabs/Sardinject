@@ -2,12 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     internal sealed class FindInstanceProvider : InstanceProviderBase {
-        internal FindInstanceProvider() {
-
-        }
-
         public override bool IsRaw => true;
         public override bool IsPrefab => false;
 

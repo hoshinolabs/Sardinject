@@ -8,7 +8,7 @@ using UnityEngine;
 using VRC.SDKBase.Editor.BuildPipeline;
 #endif
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     internal static class InjectTypeInfoCache {
         static Dictionary<Type, InjectTypeInfo> cache;
 

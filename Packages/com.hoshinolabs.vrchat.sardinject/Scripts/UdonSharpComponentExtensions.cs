@@ -10,7 +10,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     internal static class UdonSharpComponentExtensions {
         internal static UdonSharpBehaviour AddUdonSharpComponentEx(this GameObject self, Type type, bool initialize) {
             if (type == typeof(UdonSharpBehaviour)) {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace HoshinoLabs.VRC.Sardinject {
+namespace HoshinoLabs.Sardinject {
     internal sealed class ContainerBuilder : IContainerBuilder {
         Action<Container> onBuild;
         public event Action<Container> OnBuild {
@@ -61,7 +61,7 @@ namespace HoshinoLabs.VRC.Sardinject {
 
         Registration BuildContainerRegistration() {
             var interfaceTypes = new HashSet<Type>(typeof(Container).GetInterfaces());
-            var provider = new ContainerProvider();
+            var provider = new ContainerInstanceProvider();
             return new Registration(typeof(Container), Lifetime.Scoped, interfaceTypes, provider);
         }
 
