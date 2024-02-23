@@ -102,7 +102,7 @@ public class Sardine : UdonSharpBehaviour {
 ```csharp
 public class StartupGreeting : UdonSharpBehaviour {
   [Inject, SerializeField, HideInInspector]
-  UdonContainer container;
+  IContainer container;
 
   private void Start() {
     var sardine = (Sardine)container.Resolve(GetUdonTypeName<Sardine>());
