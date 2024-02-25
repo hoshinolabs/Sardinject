@@ -43,7 +43,7 @@ namespace HoshinoLabs.Sardinject {
                     }
                 case Lifetime.Cached: {
                         if (!registry.Exists(registration.ImplementationType)) {
-                            upper.Resolve(registration);
+                            return upper.Resolve(registration);
                         }
                         return cache.GetOrAdd(registration, this).Value;
                     }
