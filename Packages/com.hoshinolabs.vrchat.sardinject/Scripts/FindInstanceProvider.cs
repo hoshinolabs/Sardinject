@@ -17,7 +17,7 @@ namespace HoshinoLabs.Sardinject {
                 instance = transform.GetComponentInChildren(implementationType, true);
             }
             if (instance != null) {
-                injector.Inject(instance, container, parameters);
+                injector.Inject(instance, container, id, parameters);
             }
             return instance;
         }

@@ -6,31 +6,40 @@ using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class Container {
-        Container upper;
+        Container container;
         Registry registry;
-        ResolverCache cache;
         Resolver resolver;
+        ResolverCache resolverCache;
 
-        internal ResolverCache Cache => cache;
         public Registry Registry => registry;
 
-        internal Container(Container upper, Registry registry, ResolverCache cache, Resolver resolver) {
-            this.upper = upper;
+        internal Container(Container container, Registry registry, Resolver resolver, ResolverCache resolverCache) {
+            this.container = container;
             this.registry = registry;
-            this.cache = cache;
             this.resolver = resolver;
+            this.resolverCache = resolverCache;
+        }
+
+        public T Resolve<T>() {
+            return (T)Resolve(typeof(T));
         }
 
         public object Resolve(Type type) {
+            return Resolve(type, new Attribute[0]);
+        }
+
+        public object Resolve(Type type, Attribute[] attributes) {
             if (TryGetRegistration(type, out var registration)) {
                 return Resolve(registration);
             }
-            if(resolver != null) {
-                foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
-                    var instance = x(type, this);
-                    if (instance != null) {
-                        return instance;
-                    }
+            return ResolveFallback(type, attributes);
+        }
+
+        object ResolveFallback(Type type, Attribute[] attributes) {
+            foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
+                var instance = x(this, type, attributes);
+                if (instance != null) {
+                    return instance;
                 }
             }
             throw SardinjectException.CreateUnableResolve(type);
@@ -43,12 +52,12 @@ namespace HoshinoLabs.Sardinject {
                     }
                 case Lifetime.Cached: {
                         if (!registry.Exists(registration.ImplementationType)) {
-                            return upper.Resolve(registration);
+                            return container.Resolve(registration);
                         }
-                        return cache.GetOrAdd(registration, this).Value;
+                        return resolverCache.GetOrAdd(registration, this).Value;
                     }
                 case Lifetime.Scoped: {
-                        return cache.GetOrAdd(registration, this).Value;
+                        return resolverCache.GetOrAdd(registration, this).Value;
                     }
                 default: {
                         return registration.GetInstance(this);
@@ -60,15 +69,15 @@ namespace HoshinoLabs.Sardinject {
             if (registry.TryGet(type, out registration)) {
                 return true;
             }
-            if (upper != null) {
-                return upper.TryGetRegistration(type, out registration);
+            if (container != null) {
+                return container.TryGetRegistration(type, out registration);
             }
             return false;
         }
 
         public void Inject(object instance) {
             var injector = InjectorCache.GetOrAdd(instance.GetType());
-            injector.Inject(instance, this, null);
+            injector.Inject(instance, this, null, null);
         }
     }
 }

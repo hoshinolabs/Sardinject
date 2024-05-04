@@ -5,8 +5,13 @@ using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class Context {
-        Context upper;
-        Resolver resolver;
+        Context context;
+
+        Resolver resolver = default;
+        public event Resolver Resolver {
+            add => resolver += value;
+            remove => resolver -= value;
+        }
 
         RegistrationCache registrationCache = new RegistrationCache();
         ResolverCache resolverCache = new ResolverCache();
@@ -17,20 +22,20 @@ namespace HoshinoLabs.Sardinject {
 
         List<Installer> installers = new List<Installer>();
 
-        public Context(Resolver resolver = null) {
-            this.resolver = resolver;
+        public Context() {
+
         }
 
-        public Context New(Resolver resolver = null) {
+        public Context New() {
             var context = new Context();
-            context.upper = this;
-            context.resolver = this.resolver + resolver;
+            context.context = this;
+            context.resolver = resolver;
             return context;
         }
 
         public void Build() {
-            upper?.Build();
-            var builder = new ContainerBuilder(upper?.container, resolver, registrationCache, resolverCache);
+            context?.Build();
+            var builder = new ContainerBuilder(context?.container, resolver, registrationCache, resolverCache);
             builder.OnBuild += container => {
                 this.container = container;
             };

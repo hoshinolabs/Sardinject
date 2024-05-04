@@ -4,5 +4,5 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    public delegate object Resolver(Type type, Container container);
+    public delegate object Resolver(Container container, Type type, IEnumerable<Attribute> attributes);
 }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
@@ -11,48 +13,84 @@ namespace HoshinoLabs.Sardinject {
             this.info = info;
         }
 
-        public void Inject(object instance, Container container, Hashtable parameters) {
-            InjectFields(instance, container, parameters);
-            InjectProperties(instance, container, parameters);
-            InjectMethods(instance, container, parameters);
+        public void Inject(object instance, Container container, object id, Hashtable parameters) {
+            InjectFields(instance, container, id, parameters);
+            InjectProperties(instance, container, id, parameters);
+            InjectMethods(instance, container, id, parameters);
         }
 
-        void InjectFields(object instance, Container container, Hashtable parameters) {
+        void InjectFields(object instance, Container container, object id, Hashtable parameters) {
             foreach (var field in info.Fields) {
-                try {
-                    var value = container.ResolveWithParameters(field.FieldType, field.Name, parameters);
-                    field.SetValue(instance, value);
-                }
-                catch(SardinjectException) {
-                    throw SardinjectException.CreateUnableResolveField(field.FieldType, field.Name);
-                }
+                InjectField(field, instance, container, id, parameters);
             }
         }
 
-        void InjectProperties(object instance, Container container, Hashtable parameters) {
+        void InjectField(FieldInfo field, object instance, Container container, object id, Hashtable parameters) {
+            var attribute = field.GetCustomAttribute<InjectAttribute>();
+            try {
+                var attributes = field.GetCustomAttributes().ToArray();
+                var value = Resolve(container, field.FieldType, field.Name, attributes, parameters);
+                field.SetValue(instance, value);
+            }
+            catch (SardinjectException) {
+                if (attribute.Optional) {
+                    return;
+                }
+                throw SardinjectException.CreateUnableResolveField(field.FieldType, field.Name);
+            }
+        }
+
+        void InjectProperties(object instance, Container container, object id, Hashtable parameters) {
             foreach (var property in info.Properties) {
-                try {
-                    var value = container.ResolveWithParameters(property.PropertyType, property.Name, parameters);
-                    property.SetValue(instance, value);
-                }
-                catch (SardinjectException) {
-                    throw SardinjectException.CreateUnableResolveProperty(property.PropertyType, property.Name);
-                }
+                InjectProperty(property, instance, container, id, parameters);
             }
         }
 
-        void InjectMethods(object instance, Container container, Hashtable parameters) {
-            foreach (var method in info.Methods) {
-                try {
-                    var values = method.GetParameters()
-                        .Select(x => container.ResolveWithParameters(x.ParameterType, x.Name, parameters))
-                        .ToArray();
-                    method.Invoke(instance, values);
-                }
-                catch (SardinjectException) {
-                    throw SardinjectException.CreateUnableResolveMethod(method.Name);
-                }
+        void InjectProperty(PropertyInfo property, object instance, Container container, object id, Hashtable parameters) {
+            var attribute = property.GetCustomAttribute<InjectAttribute>();
+            try {
+                var attributes = property.GetCustomAttributes().ToArray();
+                var value = Resolve(container, property.PropertyType, property.Name, attributes, parameters);
+                property.SetValue(instance, value);
             }
+            catch (SardinjectException) {
+                if (attribute.Optional) {
+                    return;
+                }
+                throw SardinjectException.CreateUnableResolveProperty(property.PropertyType, property.Name);
+            }
+        }
+
+        void InjectMethods(object instance, Container container, object id, Hashtable parameters) {
+            foreach (var method in info.Methods) {
+                InjectMethod(method, instance, container, id, parameters);
+            }
+        }
+
+        void InjectMethod(MethodInfo method, object instance, Container container, object id, Hashtable parameters) {
+            var attribute = method.GetCustomAttribute<InjectAttribute>();
+            try {
+                var values = method.GetParameters()
+                    .Select(x => Resolve(container, x.ParameterType, x.Name, x.GetCustomAttributes().ToArray(), parameters))
+                    .ToArray();
+                method.Invoke(instance, values);
+            }
+            catch (SardinjectException) {
+                if (attribute.Optional) {
+                    return;
+                }
+                throw SardinjectException.CreateUnableResolveMethod(method.Name);
+            }
+        }
+
+        object Resolve(Container container, Type parameterType, string parameterName, Attribute[] attributes, Hashtable parameters) {
+            if (parameters.ContainsKey(parameterType)) {
+                return parameters[parameterType];
+            }
+            if (parameters.ContainsKey(parameterName)) {
+                return parameters[parameterName];
+            }
+            return container.Resolve(parameterType, attributes);
         }
     }
 }

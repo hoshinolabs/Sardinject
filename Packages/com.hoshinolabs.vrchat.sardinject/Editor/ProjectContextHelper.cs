@@ -40,12 +40,15 @@ namespace HoshinoLabs.Sardinject {
             go = null;
             cache = new Dictionary<Container, IContainer>();
 
-            context = new Context((Type type, Container scope) => {
-                if (typeof(IContainer).IsAssignableFrom(type)) {
-                    return GetOrBuildContainerUdon(scope);
-                }
-                return null;
-            });
+            context = new Context();
+            context.Resolver += Resolver;
+        }
+
+        static object Resolver(Container container, Type type, IEnumerable<Attribute> attributes) {
+            if (typeof(IContainer).IsAssignableFrom(type)) {
+                return GetOrBuildContainerUdon(container);
+            }
+            return null;
         }
 
         static GameObject GetOrBuildGO() {

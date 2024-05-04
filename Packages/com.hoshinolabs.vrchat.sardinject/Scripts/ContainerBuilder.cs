@@ -12,17 +12,17 @@ namespace HoshinoLabs.Sardinject {
             remove => onBuild -= value;
         }
 
-        Container upper;
+        Container container;
         Resolver resolver;
         RegistrationCache registrationCache;
         ResolverCache resolverCache;
 
-        public ContainerBuilder(Resolver resolver = null) {
-            this.resolver = resolver;
+        public ContainerBuilder() {
+
         }
 
-        internal ContainerBuilder(Container upper, Resolver resolver, RegistrationCache registrationCache, ResolverCache resolverCache) {
-            this.upper = upper;
+        internal ContainerBuilder(Container container, Resolver resolver, RegistrationCache registrationCache, ResolverCache resolverCache) {
+            this.container = container;
             this.resolver = resolver;
             this.registrationCache = registrationCache;
             this.resolverCache = resolverCache;
@@ -37,7 +37,7 @@ namespace HoshinoLabs.Sardinject {
 
         public Container Build() {
             var registry = BuildRegistry();
-            var container = new Container(upper, registry, resolverCache, resolver);
+            var container = new Container(this.container, registry, resolver, resolverCache);
             onBuild(container);
             return container;
         }

@@ -31,7 +31,7 @@ namespace HoshinoLabs.Sardinject {
 #else
             var instance = go.AddComponent(implementationType);
 #endif
-            injector.Inject(instance, container, parameters);
+            injector.Inject(instance, container, id, parameters);
             instance.gameObject.SetActive(true);
             return instance;
         }

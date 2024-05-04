@@ -7,8 +7,13 @@ namespace HoshinoLabs.Sardinject {
     public static class ProjectContext {
         static Context instance;
 
-        public static Context New(Resolver resolver = null) {
-            return instance.New(resolver);
+        public static event Resolver Resolver {
+            add => instance.Resolver += value;
+            remove => instance.Resolver -= value;
+        }
+
+        public static Context New() {
+            return instance.New();
         }
 
         public static void Build() {

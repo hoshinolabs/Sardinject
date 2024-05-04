@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     internal abstract class InstanceProviderBase {
+        protected object id;
+        public object Id {
+            get => id;
+            set => id = value;
+        }
         protected Hashtable parameters = new Hashtable();
         public Hashtable Parameters => parameters;
         protected Func<Transform> getTransform;

@@ -20,7 +20,7 @@ namespace HoshinoLabs.Sardinject {
             var instance = transform ? GameObject.Instantiate(prefab, transform) : GameObject.Instantiate(prefab);
             instance.name = prefab.name;
             var component = instance.GetComponent(implementationType);
-            injector.Inject(component, container, parameters);
+            injector.Inject(component, container, id, parameters);
             prefab.SetActive(active);
             instance.SetActive(active);
             return instance;

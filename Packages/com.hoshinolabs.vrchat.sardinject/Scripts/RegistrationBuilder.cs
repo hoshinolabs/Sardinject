@@ -63,6 +63,11 @@ namespace HoshinoLabs.Sardinject {
             return this;
         }
 
+        public RegistrationBuilder WithId(object id) {
+            provider.Id = id;
+            return this;
+        }
+
         public RegistrationBuilder WithParameter<T>(T value) {
             return WithParameter(typeof(T), value);
         }
