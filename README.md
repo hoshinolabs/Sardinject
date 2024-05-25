@@ -1,7 +1,7 @@
 # Sardinject
 
 ![](https://img.shields.io/badge/unity-2022.3+-000.svg)
-[![Releases](https://img.shields.io/github/release/hoshinolabs-vrchat/Sardinject.svg)](https://github.com/hoshinolabs-vrchat/Sardinject/releases)
+[![Releases](https://img.shields.io/github/release/hoshinolabs/Sardinject.svg)](https://github.com/hoshinolabs/Sardinject/releases)
 
 The simple DI (Dependency Injection) for VRChat.
 
