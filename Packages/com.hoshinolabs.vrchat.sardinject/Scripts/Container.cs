@@ -36,10 +36,12 @@ namespace HoshinoLabs.Sardinject {
         }
 
         object ResolveFallback(Type type, Attribute[] attributes) {
-            foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
-                var instance = x(this, type, attributes);
-                if (instance != null) {
-                    return instance;
+            if (resolver != null) {
+                foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
+                    var instance = x(this, type, attributes);
+                    if (instance != null) {
+                        return instance;
+                    }
                 }
             }
             throw SardinjectException.CreateUnableResolve(type);
