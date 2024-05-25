@@ -52,9 +52,9 @@ jobs:
       # Copy required files
       - name: Copy Required Files
         run: |
-          cp -f README.md Packages/com.hoshinolabs.vrchat.sardinject/README.md
-          cp -f README_en.md Packages/com.hoshinolabs.vrchat.sardinject/README_en.md
-          cp -f LICENSE Packages/com.hoshinolabs.vrchat.sardinject/LICENSE.md
+          cp -f README.md Packages/com.hoshinolabs.sardinject/README.md
+          cp -f README_en.md Packages/com.hoshinolabs.sardinject/README_en.md
+          cp -f LICENSE Packages/com.hoshinolabs.sardinject/LICENSE.md
       
       # Configure the Environment Variables needed for releasing the Package
       - name: Set Environment Variables
