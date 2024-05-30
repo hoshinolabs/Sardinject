@@ -11,7 +11,6 @@ The simple DI (Dependency Injection) for VRChat.
 ## Features
 
 - IDパラメータ付きの注入
-- 複数インスタンスの解決
 
 ## Documentation
 

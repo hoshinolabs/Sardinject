@@ -31,20 +31,26 @@ namespace HoshinoLabs.Sardinject {
         public object Resolve(Type type, Attribute[] attributes) {
             if (type.IsArray) {
                 type = type.GetElementType();
-                var objs = new List<object>();
+                var objs = default(List<object>);
                 if (TryGetRegistrations(type, out var registrations)) {
+                    if (objs == null) {
+                        objs = new List<object>();
+                    }
                     objs.AddRange(registrations.Select(x => (object[])Resolve(x)).SelectMany(x => x));
                 }
                 if (resolver != null) {
                     foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
                         var instance = x(this, type, attributes);
                         if (instance != null) {
+                            if (objs == null) {
+                                objs = new List<object>();
+                            }
                             objs.Add(instance);
                         }
                     }
                 }
-                objs = objs.Distinct().ToList();
-                if (0 < objs.Count) {
+                if (objs != null) {
+                    objs = objs.Distinct().ToList();
                     var array = Array.CreateInstance(type, objs.Count);
                     Array.Copy(objs.ToArray(), array, objs.Count);
                     return array;
