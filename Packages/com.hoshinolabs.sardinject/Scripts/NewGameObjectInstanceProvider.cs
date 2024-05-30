@@ -17,7 +17,7 @@ namespace HoshinoLabs.Sardinject {
         public override bool IsRaw => false;
         public override bool IsPrefab => false;
 
-        public override object GetInstance(Container container) {
+        public override object[] GetInstance(Container container) {
             var name = string.IsNullOrEmpty(gameObjectName) ? implementationType.Name : gameObjectName;
             var go = new GameObject(name);
             go.SetActive(false);
@@ -33,7 +33,7 @@ namespace HoshinoLabs.Sardinject {
 #endif
             injector.Inject(instance, container, id, parameters);
             instance.gameObject.SetActive(true);
-            return instance;
+            return new[] { instance };
         }
     }
 }

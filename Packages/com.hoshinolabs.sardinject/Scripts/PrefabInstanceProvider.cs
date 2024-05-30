@@ -13,7 +13,7 @@ namespace HoshinoLabs.Sardinject {
         public override bool IsRaw => false;
         public override bool IsPrefab => true;
 
-        public override object GetInstance(Container container) {
+        public override object[] GetInstance(Container container) {
             var active = prefab.activeSelf;
             var transform = getTransform == null ? null : getTransform();
             prefab.SetActive(false);
@@ -23,7 +23,7 @@ namespace HoshinoLabs.Sardinject {
             injector.Inject(component, container, id, parameters);
             prefab.SetActive(active);
             instance.SetActive(active);
-            return instance;
+            return new[] { instance };
         }
     }
 }

@@ -29,8 +29,31 @@ namespace HoshinoLabs.Sardinject {
         }
 
         public object Resolve(Type type, Attribute[] attributes) {
+            if (type.IsArray) {
+                type = type.GetElementType();
+                var objs = new List<object>();
+                if (TryGetRegistrations(type, out var registrations)) {
+                    objs.AddRange(registrations.Select(x => (object[])Resolve(x)).SelectMany(x => x));
+                }
+                if (resolver != null) {
+                    foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
+                        var instance = x(this, type, attributes);
+                        if (instance != null) {
+                            objs.Add(instance);
+                        }
+                    }
+                }
+                objs = objs.Distinct().ToList();
+                if (0 < objs.Count) {
+                    var array = Array.CreateInstance(type, objs.Count);
+                    Array.Copy(objs.ToArray(), array, objs.Count);
+                    return array;
+                }
+                throw SardinjectException.CreateUnableResolve(type);
+            }
             if (TryGetRegistration(type, out var registration)) {
-                return Resolve(registration);
+                var objs = (object[])Resolve(registration);
+                return 0 < objs.Length ? objs.First() : null;
             }
             return ResolveFallback(type, attributes);
         }
@@ -67,12 +90,27 @@ namespace HoshinoLabs.Sardinject {
             }
         }
 
-        bool TryGetRegistration(Type type, out Registration registration) {
-            if (registry.TryGet(type, out registration)) {
-                return true;
+        bool TryGetRegistrations(Type type, out IEnumerable<Registration> registrations) {
+            var _registrations = new HashSet<Registration>();
+            if (registry.TryGet(type, out var _registrations1)) {
+                foreach (var registration in _registrations1) {
+                    _registrations.Add(registration);
+                }
             }
-            if (container != null) {
-                return container.TryGetRegistration(type, out registration);
+            if (container != null && container.TryGetRegistrations(type, out var _registrations2)) {
+                foreach (var registration in _registrations2) {
+                    _registrations.Add(registration);
+                }
+            }
+            registrations = 0 < _registrations.Count ? _registrations : null;
+            return 0 < _registrations.Count;
+        }
+
+        bool TryGetRegistration(Type type, out Registration registration) {
+            registration = null;
+            if (TryGetRegistrations(type, out var registrations)) {
+                registration = registrations.First();
+                return true;
             }
             return false;
         }

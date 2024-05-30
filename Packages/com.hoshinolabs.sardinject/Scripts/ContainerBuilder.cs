@@ -81,19 +81,25 @@ namespace HoshinoLabs.Sardinject {
             stack.Push(current);
             if (InjectTypeInfoCache.TryGet(current.ImplementationType, out var info)) {
                 foreach (var field in info.Fields) {
-                    if (registry.TryGet(field.FieldType, out var registration)) {
-                        DetectsCircularDependencies(new ReferenceInfo(registration, current.Reference, field), registry, stack);
+                    if (registry.TryGet(field.FieldType, out var registrations)) {
+                        foreach (var registration in registrations) {
+                            DetectsCircularDependencies(new ReferenceInfo(registration, current.Reference, field), registry, stack);
+                        }
                     }
                 }
                 foreach (var property in info.Properties) {
-                    if (registry.TryGet(property.PropertyType, out var registration)) {
-                        DetectsCircularDependencies(new ReferenceInfo(registration, current.Reference, property), registry, stack);
+                    if (registry.TryGet(property.PropertyType, out var registrations)) {
+                        foreach (var registration in registrations) {
+                            DetectsCircularDependencies(new ReferenceInfo(registration, current.Reference, property), registry, stack);
+                        }
                     }
                 }
                 foreach (var method in info.Methods) {
                     foreach (var parameter in method.GetParameters()) {
-                        if (registry.TryGet(parameter.ParameterType, out var registration)) {
-                            DetectsCircularDependencies(new ReferenceInfo(registration, current.Reference, method), registry, stack);
+                        if (registry.TryGet(parameter.ParameterType, out var registrations)) {
+                            foreach (var registration in registrations) {
+                                DetectsCircularDependencies(new ReferenceInfo(registration, current.Reference, method), registry, stack);
+                            }
                         }
                     }
                 }

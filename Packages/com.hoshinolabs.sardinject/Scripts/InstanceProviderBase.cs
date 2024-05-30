@@ -29,6 +29,6 @@ namespace HoshinoLabs.Sardinject {
         public abstract bool IsRaw { get; }
         public abstract bool IsPrefab { get; }
 
-        public abstract object GetInstance(Container container);
+        public abstract object[] GetInstance(Container container);
     }
 }

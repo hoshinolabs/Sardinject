@@ -7,19 +7,15 @@ namespace HoshinoLabs.Sardinject {
         public override bool IsRaw => true;
         public override bool IsPrefab => false;
 
-        public override object GetInstance(Container container) {
-            var instance = (Component)null;
-            if (getTransform == null) {
-                instance = (Component)GameObject.FindObjectOfType(implementationType, true);
-            }
-            else {
-                var transform = getTransform();
-                instance = transform.GetComponentInChildren(implementationType, true);
-            }
-            if (instance != null) {
+        public override object[] GetInstance(Container container) {
+            var transform = getTransform == null ? null : getTransform();
+            var instances = transform == null
+                ? GameObject.FindObjectsOfType(implementationType, true)
+                : transform.GetComponentsInChildren(implementationType, true);
+            foreach (var instance in instances) {
                 injector.Inject(instance, container, id, parameters);
             }
-            return instance;
+            return instances;
         }
     }
 }

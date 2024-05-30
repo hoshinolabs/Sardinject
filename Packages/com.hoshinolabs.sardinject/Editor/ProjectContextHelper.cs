@@ -121,6 +121,7 @@ namespace HoshinoLabs.Sardinject {
         static (string[] _0, int[] _1, int[] _2, GameObject[] _3, DataDictionary cache) BuildContainerData(Container container) {
             var containerCache = new DataDictionary();
             var containerData = container.Registry.Table
+                .SelectMany(x => x.Value.Select(Value => (x.Key, Value)))
                 .Select(x => BuildContainerData(containerCache, x.Key, x.Value, container))
                 .ToList();
             return (

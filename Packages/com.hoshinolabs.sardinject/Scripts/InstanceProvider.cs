@@ -13,9 +13,9 @@ namespace HoshinoLabs.Sardinject {
         public override bool IsRaw => true;
         public override bool IsPrefab => false;
 
-        public override object GetInstance(Container container) {
+        public override object[] GetInstance(Container container) {
             injector.Inject(instance, container, id, parameters);
-            return instance;
+            return new[] { instance };
         }
     }
 }
