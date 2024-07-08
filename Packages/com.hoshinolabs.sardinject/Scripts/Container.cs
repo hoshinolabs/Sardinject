@@ -25,10 +25,6 @@ namespace HoshinoLabs.Sardinject {
         }
 
         public object Resolve(Type type) {
-            return Resolve(type, new Attribute[0]);
-        }
-
-        public object Resolve(Type type, Attribute[] attributes) {
             if (type.IsArray) {
                 type = type.GetElementType();
                 var objs = default(List<object>);
@@ -40,7 +36,7 @@ namespace HoshinoLabs.Sardinject {
                 }
                 if (resolver != null) {
                     foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
-                        var instance = x(this, type, attributes);
+                        var instance = x(this, type);
                         if (instance != null) {
                             if (objs == null) {
                                 objs = new List<object>();
@@ -61,13 +57,13 @@ namespace HoshinoLabs.Sardinject {
                 var objs = (object[])Resolve(registration);
                 return 0 < objs.Length ? objs.First() : null;
             }
-            return ResolveFallback(type, attributes);
+            return ResolveFallback(type);
         }
 
-        object ResolveFallback(Type type, Attribute[] attributes) {
+        object ResolveFallback(Type type) {
             if (resolver != null) {
                 foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
-                    var instance = x(this, type, attributes);
+                    var instance = x(this, type);
                     if (instance != null) {
                         return instance;
                     }

@@ -44,7 +44,7 @@ namespace HoshinoLabs.Sardinject {
             context.Resolver += Resolver;
         }
 
-        static object Resolver(Container container, Type type, IEnumerable<Attribute> attributes) {
+        static object Resolver(Container container, Type type) {
             if (typeof(IContainer).IsAssignableFrom(type)) {
                 return GetOrBuildContainerUdon(container);
             }
@@ -67,10 +67,10 @@ namespace HoshinoLabs.Sardinject {
 
             var go = GetOrBuildGO();
 
-            var containerGo = new GameObject($"{ContainerTypeResolver.ImplementationType.Name} [{scope.GetHashCode():x8}]");
+            var containerGo = new GameObject($"{SardinjectTypeResolver.ImplementationType.Name} [{scope.GetHashCode():x8}]");
             containerGo.transform.SetParent(go.transform);
 
-            udon = (IContainer)containerGo.AddUdonSharpComponentEx(ContainerTypeResolver.ImplementationType, false);
+            udon = (IContainer)containerGo.AddUdonSharpComponentEx(SardinjectTypeResolver.ImplementationType, false);
 
             cache.Add(scope, udon);
 

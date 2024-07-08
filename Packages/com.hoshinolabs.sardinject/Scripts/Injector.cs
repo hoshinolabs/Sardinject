@@ -28,8 +28,7 @@ namespace HoshinoLabs.Sardinject {
         void InjectField(FieldInfo field, object instance, Container container, object id, Hashtable parameters) {
             var attribute = field.GetCustomAttribute<InjectAttribute>();
             try {
-                var attributes = field.GetCustomAttributes().ToArray();
-                var value = Resolve(container, field.FieldType, field.Name, attributes, parameters);
+                var value = Resolve(container, field.FieldType, field.Name, parameters);
                 field.SetValue(instance, value);
             }
             catch (SardinjectException) {
@@ -49,8 +48,7 @@ namespace HoshinoLabs.Sardinject {
         void InjectProperty(PropertyInfo property, object instance, Container container, object id, Hashtable parameters) {
             var attribute = property.GetCustomAttribute<InjectAttribute>();
             try {
-                var attributes = property.GetCustomAttributes().ToArray();
-                var value = Resolve(container, property.PropertyType, property.Name, attributes, parameters);
+                var value = Resolve(container, property.PropertyType, property.Name, parameters);
                 property.SetValue(instance, value);
             }
             catch (SardinjectException) {
@@ -71,7 +69,7 @@ namespace HoshinoLabs.Sardinject {
             var attribute = method.GetCustomAttribute<InjectAttribute>();
             try {
                 var values = method.GetParameters()
-                    .Select(x => Resolve(container, x.ParameterType, x.Name, x.GetCustomAttributes().ToArray(), parameters))
+                    .Select(x => Resolve(container, x.ParameterType, x.Name, parameters))
                     .ToArray();
                 method.Invoke(instance, values);
             }
@@ -83,14 +81,16 @@ namespace HoshinoLabs.Sardinject {
             }
         }
 
-        object Resolve(Container container, Type parameterType, string parameterName, Attribute[] attributes, Hashtable parameters) {
-            if (parameters.ContainsKey(parameterType)) {
-                return parameters[parameterType];
+        object Resolve(Container container, Type parameterType, string parameterName, Hashtable parameters) {
+            if (parameters != null) {
+                if (parameters.ContainsKey(parameterType)) {
+                    return parameters[parameterType];
+                }
+                if (parameters.ContainsKey(parameterName)) {
+                    return parameters[parameterName];
+                }
             }
-            if (parameters.ContainsKey(parameterName)) {
-                return parameters[parameterName];
-            }
-            return container.Resolve(parameterType, attributes);
+            return container.Resolve(parameterType);
         }
     }
 }

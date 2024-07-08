@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject.Udon {
-    public static class ContainerTypeResolver {
+    public static class SardinjectTypeResolver {
         public static Type ImplementationType => typeof(UdonContainer);
 
     }
