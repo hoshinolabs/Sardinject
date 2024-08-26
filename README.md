@@ -1,12 +1,9 @@
-# Sardinject
+<p><img src="Graphics/logo.png" width="500"></p>
 
 ![](https://img.shields.io/badge/unity-2022.3+-000.svg)
 [![Releases](https://img.shields.io/github/release/hoshinolabs/Sardinject.svg)](https://github.com/hoshinolabs/Sardinject/releases)
 
-The simple DI (Dependency Injection) for VRChat.
-
-- **実行時の処理負荷無し:** ほとんどの処理はビルド時に解決され実行時に処理負荷がありません。
-- **Udon上で実行可能:** Udonランタイムでも機能を限定して動作します。
+The simple DI (Dependency Injection) library for <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon</a>
 
 ## Features
 
