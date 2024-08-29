@@ -8,6 +8,8 @@ namespace HoshinoLabs.Sardinject.Udon {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     [AddComponentMenu("")]
     public class IContainer : UdonSharpBehaviour {
+        public static Type ImplementationType => typeof(Container);
+
         public virtual object Resolve(string type) => null;
         public virtual object Resolve(Type type) => null;
 

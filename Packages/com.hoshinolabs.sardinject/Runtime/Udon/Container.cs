@@ -5,10 +5,10 @@ using VRC.SDK3.Data;
 using VRC.SDKBase;
 using VRC.Udon;
 
-namespace HoshinoLabs.Sardinject {
+namespace HoshinoLabs.Sardinject.Udon {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     [AddComponentMenu("")]
-    internal sealed class UdonContainer : Udon.IContainer {
+    internal sealed class Container : IContainer {
         [SerializeField, HideInInspector]
         string[] _0;
         [SerializeField, HideInInspector]

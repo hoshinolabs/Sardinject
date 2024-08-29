@@ -15,9 +15,9 @@ namespace HoshinoLabs.Sardinject {
 
         RegistrationCache registrationCache = new RegistrationCache();
         ResolverCache resolverCache = new ResolverCache();
+        InjectorCache injectorCache = new InjectorCache();
 
         Container container;
-
         public Container Container => container;
 
         List<Installer> installers = new List<Installer>();
@@ -33,14 +33,14 @@ namespace HoshinoLabs.Sardinject {
             return context;
         }
 
-        public void Build() {
+        public Container Build() {
             context?.Build();
-            var builder = new ContainerBuilder(context?.container, resolver, registrationCache, resolverCache);
+            var builder = new ContainerBuilder(context?.container, resolver, registrationCache, resolverCache, injectorCache);
             builder.OnBuild += container => {
                 this.container = container;
             };
             InstallTo(builder);
-            builder.Build();
+            return builder.Build();
         }
 
         public void Enqueue(Action<IContainerBuilder> configuration) {

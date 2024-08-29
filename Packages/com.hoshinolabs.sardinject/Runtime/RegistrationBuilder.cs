@@ -21,8 +21,8 @@ namespace HoshinoLabs.Sardinject {
             this.provider = provider;
         }
 
-        internal Registration Build() {
-            var injector = InjectorCache.GetOrAdd(implementationType);
+        internal Registration Build(InjectorCache injectorCache) {
+            var injector = injectorCache.GetOrAdd(implementationType);
             provider.Build(injector, implementationType);
             return new Registration(ImplementationType, lifetime, InterfaceTypes, provider);
         }

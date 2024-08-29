@@ -10,14 +10,16 @@ namespace HoshinoLabs.Sardinject {
         Registry registry;
         Resolver resolver;
         ResolverCache resolverCache;
+        InjectorCache injectorCache;
 
         public Registry Registry => registry;
 
-        internal Container(Container container, Registry registry, Resolver resolver, ResolverCache resolverCache) {
+        internal Container(Container container, Registry registry, Resolver resolver, ResolverCache resolverCache, InjectorCache injectorCache) {
             this.container = container;
             this.registry = registry;
             this.resolver = resolver;
             this.resolverCache = resolverCache;
+            this.injectorCache = injectorCache;
         }
 
         public T Resolve<T>() {
@@ -118,7 +120,7 @@ namespace HoshinoLabs.Sardinject {
         }
 
         public void Inject(object instance) {
-            var injector = InjectorCache.GetOrAdd(instance.GetType());
+            var injector = injectorCache.GetOrAdd(instance.GetType());
             injector.Inject(instance, this, null, null);
         }
     }

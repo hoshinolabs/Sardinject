@@ -1,9 +1,10 @@
 {
   "name": "com.hoshinolabs.sardinject",
   "displayName": "HoshinoLabs - Sardinject",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "unity": "2022.3",
   "description": "The simple DI (Dependency Injection) library for VRChat Udon",
+  "documentationUrl": "https://github.com/hoshinolabs/Sardinject",
   "vrchatVersion": "2022.1.1",
   "author": {
     "name": "ikuko",

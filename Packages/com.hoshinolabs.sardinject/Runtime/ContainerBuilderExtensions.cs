@@ -12,8 +12,13 @@ namespace HoshinoLabs.Sardinject {
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
         /// <returns></returns>
-        public static RegistrationBuilder AddEntryPoint<T>(this IContainerBuilder self) where T : Component {
-            return self.AddInHierarchy<T>();
+        //public static RegistrationBuilder AddEntryPoint<T>(this IContainerBuilder self) where T : Component {
+        //    return self.AddInHierarchy<T>();
+        //}
+        public static void AddEntryPoint<T>(this IContainerBuilder self) where T : Component {
+            self.OnBuild += container => {
+                container.Resolve<T>();
+            };
         }
 
         /// <summary>

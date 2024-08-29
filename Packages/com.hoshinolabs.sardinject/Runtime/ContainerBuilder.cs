@@ -16,16 +16,18 @@ namespace HoshinoLabs.Sardinject {
         Resolver resolver;
         RegistrationCache registrationCache;
         ResolverCache resolverCache;
+        InjectorCache injectorCache;
 
         public ContainerBuilder() {
 
         }
 
-        internal ContainerBuilder(Container container, Resolver resolver, RegistrationCache registrationCache, ResolverCache resolverCache) {
+        internal ContainerBuilder(Container container, Resolver resolver, RegistrationCache registrationCache, ResolverCache resolverCache, InjectorCache injectorCache) {
             this.container = container;
             this.resolver = resolver;
             this.registrationCache = registrationCache;
             this.resolverCache = resolverCache;
+            this.injectorCache = injectorCache;
         }
 
         List<RegistrationBuilder> registrationBuilders = new List<RegistrationBuilder>();
@@ -37,7 +39,7 @@ namespace HoshinoLabs.Sardinject {
 
         public Container Build() {
             var registry = BuildRegistry();
-            var container = new Container(this.container, registry, resolver, resolverCache);
+            var container = new Container(this.container, registry, resolver, resolverCache, injectorCache);
             onBuild(container);
             return container;
         }
@@ -51,7 +53,7 @@ namespace HoshinoLabs.Sardinject {
 
         Registration[] BuildRegistrations() {
             foreach (var registration in registrationBuilders
-                .Select(registrationBuilder => registrationBuilder.Build())) {
+                .Select(registrationBuilder => registrationBuilder.Build(injectorCache))) {
                 registrationCache.Add(registration);
             }
 
@@ -79,7 +81,7 @@ namespace HoshinoLabs.Sardinject {
                 }
             }
             stack.Push(current);
-            if (InjectTypeInfoCache.TryGet(current.ImplementationType, out var info)) {
+            if (injectorCache.InjectTypeInfoCache.TryGet(current.ImplementationType, out var info)) {
                 foreach (var field in info.Fields) {
                     if (registry.TryGet(field.FieldType, out var registrations)) {
                         foreach (var registration in registrations) {
