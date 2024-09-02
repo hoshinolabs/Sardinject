@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: UdonContainer
+  m_Name: Container
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 088ed6c978a5d0a4780e5e226ddd21e8,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 8d327da6f18340a42b164d930850f8ab,
     type: 2}
   udonAssembly: 
   assemblyError: 
