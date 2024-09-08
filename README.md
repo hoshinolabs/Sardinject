@@ -3,7 +3,9 @@
 ![](https://img.shields.io/badge/unity-2022.3+-000.svg)
 [![Releases](https://img.shields.io/github/release/hoshinolabs/Sardinject.svg)](https://github.com/hoshinolabs/Sardinject/releases)
 
-The simple DI (Dependency Injection) library for <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon</a>
+Sardinject is a simple DI (Dependency Injection) library for <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon#</a>.  
+  
+Sardinject は <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon#</a> 用のシンプルなDI(依存性注入)ライブラリ。
 
 ## Features
 
