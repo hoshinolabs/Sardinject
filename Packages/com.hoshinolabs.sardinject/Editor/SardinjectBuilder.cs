@@ -41,7 +41,7 @@ namespace HoshinoLabs.Sardinject {
             builder.UnderTransform(() => {
                 if (rootGo == null) {
                     rootGo = new GameObject($"__{GetType().Namespace.Replace('.', '_')}__");
-                    //rootGo.hideFlags = HideFlags.HideInHierarchy;
+                    rootGo.hideFlags = HideFlags.HideInHierarchy;
                 }
                 return rootGo.transform;
             });
