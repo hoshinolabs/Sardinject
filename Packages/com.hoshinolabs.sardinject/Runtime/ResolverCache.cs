@@ -1,23 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     internal sealed class ResolverCache {
-        Dictionary<Registration, Lazy<object>> cache = new Dictionary<Registration, Lazy<object>>();
+        readonly Dictionary<IResolver, Lazy<object>> cache = new();
 
-        public bool TryGet(Registration registration, out Lazy<object> value) {
-            return cache.TryGetValue(registration, out value);
-        }
-
-        public Lazy<object> GetOrAdd(Registration registration, Container container) {
-            if (cache.TryGetValue(registration, out var value)) {
-                return value;
+        public object GetOrAdd(IResolver resolver, Func<object> factory) {
+            if (!cache.TryGetValue(resolver, out var value)) {
+                value = new(() => factory.Invoke());
+                cache.Add(resolver, value);
             }
-            value = new(() => registration.GetInstance(container));
-            cache.Add(registration, value);
-            return value;
+            return value.Value;
         }
     }
 }

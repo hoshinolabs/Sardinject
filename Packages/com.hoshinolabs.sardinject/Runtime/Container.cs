@@ -1,127 +1,75 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class Container {
-        Container container;
-        Registry registry;
-        Resolver resolver;
-        ResolverCache resolverCache;
-        InjectorCache injectorCache;
+        readonly ResolverCache cache = new();
 
-        public Registry Registry => registry;
+        public readonly Registry Registry;
 
-        internal Container(Container container, Registry registry, Resolver resolver, ResolverCache resolverCache, InjectorCache injectorCache) {
-            this.container = container;
-            this.registry = registry;
-            this.resolver = resolver;
-            this.resolverCache = resolverCache;
-            this.injectorCache = injectorCache;
+        internal Container(Registry registry) {
+            Registry = registry;
         }
 
-        public T Resolve<T>() {
-            return (T)Resolve(typeof(T));
+        public Container Scope(Action<ContainerBuilder> configuration = null) {
+            var builder = new ContainerBuilder(Registry);
+            configuration?.Invoke(builder);
+            return builder.Build();
         }
 
         public object Resolve(Type type) {
+            return ResolveOrId(type, null);
+        }
+
+        internal object ResolveOrId(Type type, object id) {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)) {
+                var elementType = type.GenericTypeArguments.First();
+                return Registry.GetBindings(elementType)
+                    .Where(x => id == null || id.Equals(x.Id))
+                    .Select(x => Resolve(x))
+                    .Cast(elementType);
+            }
             if (type.IsArray) {
-                type = type.GetElementType();
-                var objs = default(List<object>);
-                if (TryGetRegistrations(type, out var registrations)) {
-                    if (objs == null) {
-                        objs = new List<object>();
-                    }
-                    objs.AddRange(registrations.Select(x => (object[])Resolve(x)).SelectMany(x => x));
-                }
-                if (resolver != null) {
-                    foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
-                        var instance = x(this, type);
-                        if (instance != null) {
-                            if (objs == null) {
-                                objs = new List<object>();
-                            }
-                            objs.Add(instance);
-                        }
-                    }
-                }
-                if (objs != null) {
-                    objs = objs.Distinct().ToList();
-                    var array = Array.CreateInstance(type, objs.Count);
-                    Array.Copy(objs.ToArray(), array, objs.Count);
-                    return array;
-                }
-                throw SardinjectException.CreateUnableResolve(type);
+                var elementType = type.GetElementType();
+                return Registry.GetBindings(elementType)
+                    .Where(x => id == null || id.Equals(x.Id))
+                    .Select(x => Resolve(x))
+                    .Cast(elementType)
+                    .ToArray(elementType);
             }
-            if (TryGetRegistration(type, out var registration)) {
-                var objs = (object[])Resolve(registration);
-                return 0 < objs.Length ? objs.First() : null;
+            var binding = Registry.GetBindings(type)
+                .Reverse()
+                .Where(x => id == null || id.Equals(x.Id))
+                .FirstOrDefault();
+            if (binding == null) {
+                throw new SardinjectException($"Unable to resolve for type `{type.FullName}`.");
             }
-            return ResolveFallback(type);
+            return Resolve(binding);
         }
 
-        object ResolveFallback(Type type) {
-            if (resolver != null) {
-                foreach (var x in resolver.GetInvocationList().Cast<Resolver>()) {
-                    var instance = x(this, type);
-                    if (instance != null) {
-                        return instance;
-                    }
-                }
-            }
-            throw SardinjectException.CreateUnableResolve(type);
+        internal object Resolve(Binding binding) {
+            return binding.Resolver.Resolve(this);
         }
 
-        object Resolve(Registration registration) {
-            switch (registration.Lifetime) {
-                case Lifetime.Transient: {
-                        return registration.GetInstance(this);
-                    }
-                case Lifetime.Cached: {
-                        if (!registry.Exists(registration.ImplementationType)) {
-                            return container.Resolve(registration);
-                        }
-                        return resolverCache.GetOrAdd(registration, this).Value;
-                    }
-                case Lifetime.Scoped: {
-                        return resolverCache.GetOrAdd(registration, this).Value;
-                    }
-                default: {
-                        return registration.GetInstance(this);
-                    }
-            }
+        internal object Resolve(IResolver resolver) {
+            return cache.GetOrAdd(resolver, () => resolver.Resolve(this));
         }
 
-        bool TryGetRegistrations(Type type, out IEnumerable<Registration> registrations) {
-            var _registrations = new HashSet<Registration>();
-            if (registry.TryGet(type, out var _registrations1)) {
-                foreach (var registration in _registrations1) {
-                    _registrations.Add(registration);
-                }
+        internal object ResolveOrParameterOrId(string name, Type type, object id, IReadOnlyDictionary<object, IResolver> parameters) {
+            if (parameters.TryGetValue(name, out var nameParameter)) {
+                return nameParameter.Resolve(this);
             }
-            if (container != null && container.TryGetRegistrations(type, out var _registrations2)) {
-                foreach (var registration in _registrations2) {
-                    _registrations.Add(registration);
-                }
+            if (parameters.TryGetValue(type, out var typeParameter)) {
+                return typeParameter.Resolve(this);
             }
-            registrations = 0 < _registrations.Count ? _registrations : null;
-            return 0 < _registrations.Count;
-        }
-
-        bool TryGetRegistration(Type type, out Registration registration) {
-            registration = null;
-            if (TryGetRegistrations(type, out var registrations)) {
-                registration = registrations.First();
-                return true;
-            }
-            return false;
+            return ResolveOrId(type, id);
         }
 
         public void Inject(object instance) {
-            var injector = injectorCache.GetOrAdd(instance.GetType());
-            injector.Inject(instance, this, null, null);
+            var injector = InjectorCache.GetOrBuild(instance.GetType());
+            injector.Inject(instance, this, new Dictionary<object, IResolver>());
         }
     }
 }

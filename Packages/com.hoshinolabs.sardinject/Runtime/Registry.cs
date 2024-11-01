@@ -1,39 +1,24 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class Registry {
-        Dictionary<Type, HashSet<Registration>> table = new Dictionary<Type, HashSet<Registration>>();
-        public Dictionary<Type, HashSet<Registration>> Table => table;
+        public readonly IReadOnlyDictionary<Type, List<Binding>> Data;
 
-        internal Registry(Registration[] registrations) {
-            foreach(var registration in registrations) {
-                var types = registration.InterfaceTypes
-                    .Concat(new[] { registration.ImplementationType });
-                foreach(var type in types) {
-                    if (!table.TryGetValue(type, out var data)) {
-                        data = new HashSet<Registration>();
-                    }
-                    data.Add(registration);
-                    table[type] = data;
-                }
-            }
+        public Registry() {
+            Data = new Dictionary<Type, List<Binding>>();
         }
 
-        public bool Exists(Type interfaceType) {
-            return table.ContainsKey(interfaceType);
+        public Registry(IReadOnlyDictionary<Type, List<Binding>> data) {
+            Data = data;
         }
 
-        public bool TryGet(Type interfaceType, out IEnumerable<Registration> registrations) {
-            registrations = null;
-            if (table.TryGetValue(interfaceType, out var _registrations)) {
-                registrations = _registrations;
-                return true;
+        public IEnumerable<Binding> GetBindings(Type type) {
+            if (Data.TryGetValue(type, out var bindings)) {
+                return bindings;
             }
-            return false;
+            return Enumerable.Empty<Binding>();
         }
     }
 }

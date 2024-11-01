@@ -1,26 +1,19 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    internal struct InjectTypeInfo {
-        Type type;
-        FieldInfo[] fields;
-        PropertyInfo[] properties;
-        MethodInfo[] methods;
+    public sealed class InjectTypeInfo {
+        public readonly Type Type;
+        public readonly InjectConstructorInfo Constructor;
+        public readonly InjectFieldInfo[] Fields;
+        public readonly InjectPropertyInfo[] Properties;
+        public readonly InjectMethodInfo[] Methods;
 
-        public Type Type => type;
-        public FieldInfo[] Fields => fields;
-        public PropertyInfo[] Properties => properties;
-        public MethodInfo[] Methods => methods;
-
-        internal InjectTypeInfo(Type type, FieldInfo[] fields, PropertyInfo[] properties, MethodInfo[] methods) {
-            this.type = type;
-            this.fields = fields;
-            this.properties = properties;
-            this.methods = methods;
+        public InjectTypeInfo(Type type, InjectConstructorInfo constructor, InjectFieldInfo[] fields, InjectPropertyInfo[] properties, InjectMethodInfo[] methods) {
+            Type = type;
+            Constructor = constructor;
+            Fields = fields;
+            Properties = properties;
+            Methods = methods;
         }
     }
 }

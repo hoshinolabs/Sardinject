@@ -1,96 +1,50 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class Injector {
-        InjectTypeInfo info;
+        public readonly InjectTypeInfo TypeInfo;
 
-        internal Injector(InjectTypeInfo info) {
-            this.info = info;
+        public Injector(InjectTypeInfo typeInfo) {
+            TypeInfo = typeInfo;
         }
 
-        public void Inject(object instance, Container container, object id, Hashtable parameters) {
-            InjectFields(instance, container, id, parameters);
-            InjectProperties(instance, container, id, parameters);
-            InjectMethods(instance, container, id, parameters);
+        public object Construct(Container container, IReadOnlyDictionary<object, IResolver> parameters) {
+            var values = TypeInfo.Constructor.Parameters
+                .Select(x => container.ResolveOrParameterOrId(x.ParameterInfo.Name, x.ParameterInfo.ParameterType, x.Id, parameters))
+                .ToArray();
+            var instance = TypeInfo.Constructor.ConstructorInfo.Invoke(values);
+            Inject(instance, container, parameters);
+            return instance;
         }
 
-        void InjectFields(object instance, Container container, object id, Hashtable parameters) {
-            foreach (var field in info.Fields) {
-                InjectField(field, instance, container, id, parameters);
+        public void Inject(object instance, Container container, IReadOnlyDictionary<object, IResolver> parameters) {
+            InjectFields(instance, container, parameters);
+            InjectProperties(instance, container, parameters);
+            InjectMethods(instance, container, parameters);
+        }
+
+        void InjectFields(object instance, Container container, IReadOnlyDictionary<object, IResolver> parameters) {
+            foreach (var field in TypeInfo.Fields) {
+                var value = container.ResolveOrParameterOrId(field.FieldInfo.Name, field.FieldInfo.FieldType, field.Id, parameters);
+                field.FieldInfo.SetValue(instance, value);
             }
         }
 
-        void InjectField(FieldInfo field, object instance, Container container, object id, Hashtable parameters) {
-            var attribute = field.GetCustomAttribute<InjectAttribute>();
-            try {
-                var value = Resolve(container, field.FieldType, field.Name, parameters);
-                field.SetValue(instance, value);
-            }
-            catch (SardinjectException) {
-                if (attribute.Optional) {
-                    return;
-                }
-                throw SardinjectException.CreateUnableResolveField(field.FieldType, field.Name);
+        void InjectProperties(object instance, Container container, IReadOnlyDictionary<object, IResolver> parameters) {
+            foreach (var property in TypeInfo.Properties) {
+                var value = container.ResolveOrParameterOrId(property.PropertyInfo.Name, property.PropertyInfo.PropertyType, property.Id, parameters);
+                property.PropertyInfo.SetValue(instance, value);
             }
         }
 
-        void InjectProperties(object instance, Container container, object id, Hashtable parameters) {
-            foreach (var property in info.Properties) {
-                InjectProperty(property, instance, container, id, parameters);
-            }
-        }
-
-        void InjectProperty(PropertyInfo property, object instance, Container container, object id, Hashtable parameters) {
-            var attribute = property.GetCustomAttribute<InjectAttribute>();
-            try {
-                var value = Resolve(container, property.PropertyType, property.Name, parameters);
-                property.SetValue(instance, value);
-            }
-            catch (SardinjectException) {
-                if (attribute.Optional) {
-                    return;
-                }
-                throw SardinjectException.CreateUnableResolveProperty(property.PropertyType, property.Name);
-            }
-        }
-
-        void InjectMethods(object instance, Container container, object id, Hashtable parameters) {
-            foreach (var method in info.Methods) {
-                InjectMethod(method, instance, container, id, parameters);
-            }
-        }
-
-        void InjectMethod(MethodInfo method, object instance, Container container, object id, Hashtable parameters) {
-            var attribute = method.GetCustomAttribute<InjectAttribute>();
-            try {
-                var values = method.GetParameters()
-                    .Select(x => Resolve(container, x.ParameterType, x.Name, parameters))
+        void InjectMethods(object instance, Container container, IReadOnlyDictionary<object, IResolver> parameters) {
+            foreach (var method in TypeInfo.Methods) {
+                var values = method.Parameters
+                    .Select(x => container.ResolveOrParameterOrId(x.ParameterInfo.Name, x.ParameterInfo.ParameterType, x.Id, parameters))
                     .ToArray();
-                method.Invoke(instance, values);
+                method.MethodInfo.Invoke(instance, values);
             }
-            catch (SardinjectException) {
-                if (attribute.Optional) {
-                    return;
-                }
-                throw SardinjectException.CreateUnableResolveMethod(method.Name);
-            }
-        }
-
-        object Resolve(Container container, Type parameterType, string parameterName, Hashtable parameters) {
-            if (parameters != null) {
-                if (parameters.ContainsKey(parameterType)) {
-                    return parameters[parameterType];
-                }
-                if (parameters.ContainsKey(parameterName)) {
-                    return parameters[parameterName];
-                }
-            }
-            return container.Resolve(parameterType);
         }
     }
 }

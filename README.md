@@ -3,13 +3,13 @@
 ![](https://img.shields.io/badge/unity-2022.3+-000.svg)
 [![Releases](https://img.shields.io/github/release/hoshinolabs/Sardinject.svg)](https://github.com/hoshinolabs/Sardinject/releases)
 
-Sardinject is a simple DI (Dependency Injection) library for <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon#</a>.  
+Sardinject is a simple DI (Dependency Injection) library for <a href="https://unity.com/">Unity C#</a>, <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon(U#)</a>.  
   
-Sardinject は <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon#</a> 用のシンプルなDI(依存性注入)ライブラリ。
+Sardinject は <a href="https://unity.com/">Unity C#</a>、<a href="https://udonsharp.docs.vrchat.com/">VRChat Udon(U#)</a> 用のシンプルなDI(依存性注入)ライブラリです。
 
 ## Features
 
-- IDパラメータ付きの注入
+- マルチシーン対応
 
 ## Documentation
 
@@ -39,6 +39,20 @@ vpm add com.hoshinolabs.vrchat.sardinject
 1. Download the .unitypackage from [releases](https://github.com/hoshinolabs-vrchat/Sardinject/releases) page.
 2. Open .unitypackage
 
+### Install manually (UPM)
+
+以下を UPM でインストールします。
+
+```
+https://github.com/hoshinolabs/Sardinject.git?path=Packages/com.hoshinolabs.sardinject
+```
+
+Sardinject はリリースタグを使用するので以下のようにバージョンを指定できます。
+
+```
+https://github.com/hoshinolabs/Sardinject.git?path=Packages/com.hoshinolabs.sardinject#1.0.0
+```
+
 ## Basic Usage
 
 次のような Udon があるとする。
@@ -62,28 +76,23 @@ public class StartupGreeting : UdonSharpBehaviour {
 }
 ```
 
-依存関係を記述したエディタスクリプトを作成します。
+依存関係を記述したスクリプトを作成します。  
+シーン上にオブジェクトを作成し `StartupGreeting` コンポーネントを追加します。  
+あわせて `SceneScope` コンポーネントと作成したスクリプトを追加します。
 
 ```csharp
-public class Builder : IProcessSceneWithReport {
-  public int callbackOrder => 0;
-
-  public void OnProcessScene(Scene scene, BuildReport report) {
-    var context = new Context();
-    context.Enqueue(builder => {
-      builder.AddOnNewGameObject<Sardine>(Lifetime.Cached);
-      builder.AddOnNewGameObject<StartupGreeting>(Lifetime.Cached);
-
-      builder.AddEntryPoint<StartupGreeting>();
+public class CustomInstaller : MonoBehaviour, IInstaller {
+  public void Install(ContainerBuilder containerBuilder) {
+    containerBuilder.UseComponents(transform, builder => {
+      builder.RegisterOnNewGameObject<Sardine>(Lifetime.Cached);
+      builder.RegisterInHierarchy<StartupGreeting>(Lifetime.Cached);
     });
-    context.Build();
   }
 }
 ```
 
-この例では、ゲームオブジェクトが自動的に作成され、コンポーネントが AddComponent され、 `StartupGreeting` クラスの sardine フィールドに `Sardine` クラスのインスタンスが自動的に設定されます。  
-これにより、インスペクタから複雑な設定を手動で触る必要がなくなります。  
-また、複雑なエディタ拡張を自分で作る必要もなくなります。
+この例では、`StartupGreeting` コンポーネントの sardine フィールドに `Sardine` コンポーネントが自動的に設定されます。  
+`Sardine` コンポーネントは自動的にシーン上に追加されます。
 
 ## Advanced Usage (dynamic resolve)
 
@@ -103,30 +112,30 @@ public class StartupGreeting : UdonSharpBehaviour {
   IContainer container;
 
   private void Start() {
-    var sardine = (Sardine)container.Resolve(GetUdonTypeName<Sardine>());
+    var sardine = container.Resolve<Sardine>();
     sardine.Hello();
   }
 }
 ```
 
-エディタースクリプトで、以下のように特別なコンテキストに登録しておきます。
+依存関係を記述したスクリプトを作成します。
+シーン上にオブジェクトを作成し `StartupGreeting` コンポーネントを追加します。  
+あわせて `SceneScope` コンポーネントと作成したスクリプトを追加します。
 
 ```csharp
-public class Builder : IProcessSceneWithReport {
-  public int callbackOrder => 0;
-
-  public void OnProcessScene(Scene scene, BuildReport report) {
-    var context = new Context();
-    context.Enqueue(builder => {
-      builder.AddOnNewGameObject<Sardine>(Lifetime.Cached);
-      builder.AddOnNewGameObject<StartupGreeting>(Lifetime.Cached);
-
-      builder.AddEntryPoint<StartupGreeting>();
+public class CustomInstaller : MonoBehaviour, IInstaller {
+  public void Install(ContainerBuilder containerBuilder) {
+    containerBuilder.UseComponents(transform, builder => {
+      builder.RegisterOnNewGameObject<Sardine>(Lifetime.Cached);
+      builder.RegisterInHierarchy<StartupGreeting>(Lifetime.Cached);
     });
-    context.Build();
   }
 }
 ```
+
+実行が開始されると動的に `Sardine` コンポーネントを取得します。  
+この際、 `Sardine` コンポーネントが自動的に生成され返却されます。  
+必要になるまで対象のオブジェクトを生成したくない場合に便利です。
 
 ## Advanced Usage (loose coupling between packages)
 
@@ -139,22 +148,25 @@ namespace SomeonePackage {
       Debug.Log($"Hello. What sardines are you?");
     }
   }
-
-#if UNITY_EDITOR
-  public class Builder : IProcessSceneWithReport {
-    public int callbackOrder => 0;
-
-    public void OnProcessScene(Scene scene, BuildReport report) {
-      ProjectContext.Enqueue(builder => {
-        builder.AddInHierarchy<SomeoneSardine>();
-      });
-    }
-  }
-#endif
 }
 ```
 
-あなたのパッケージから `SomeonePackage` のコンポーネントを使いたいとします。
+合わせて以下のスクリプトを作成します。
+オブジェクトを作成し `ProjectScope` コンポーネントと作成したスクリプトを追加し、プレハブとして保存します。
+
+```csharp
+namespace SomeonePackage {
+  public class CustomInstaller : MonoBehaviour, IInstaller {
+    public void Install(ContainerBuilder containerBuilder) {
+      containerBuilder.UseComponents(transform, builder => {
+        builder.RegisterOnNewGameObject<SomeoneSardine>(Lifetime.Cached);
+      });
+    }
+  }
+}
+```
+
+あなたのパッケージから `SomeonePackage` の `SomeoneSardine` コンポーネントを使いたいとします。  
 
 ```csharp
 namespace MyPackage {
@@ -166,25 +178,26 @@ namespace MyPackage {
       sardine.Hello();
     }
   }
-
-#if UNITY_EDITOR
-  public class Builder : IProcessSceneWithReport {
-    public int callbackOrder => 0;
-
-    public void OnProcessScene(Scene scene, BuildReport report) {
-      var context = ProjectContext.New();
-      context.Enqueue(builder => {
-        builder.AddInHierarchy<MySardine>();
-      });
-      context.Build();
-    }
-  }
-#endif
 }
 ```
 
-この例では、自動的にあなたの `MySardine` コンポーネントの sardine フィールドに相手の `SomeoneSardine` が設定されます。  
-つまり、どのオブジェクトに必要なコンポーネントがアタッチされているかをエディタ画面で探すことなく、簡単に依存関係を設定することができます。  
+依存関係を記述したスクリプトを作成します。
+`MySardine` コンポーネントと同じ場所に `SceneScope` コンポーネントと作成したスクリプトを追加します。
+
+```csharp
+namespace MyPackage {
+  public class CustomInstaller : MonoBehaviour, IInstaller {
+    public void Install(ContainerBuilder containerBuilder) {
+      containerBuilder.UseComponents(transform, builder => {
+        builder.RegisterInHierarchy<MySardine>();
+      });
+    }
+  }
+}
+```
+
+この例では、ビルド時にあなたの `MySardine` コンポーネントの sardine フィールドに新規オブジェクトとして生成された `SomeoneSardine` コンポーネントが設定されます。  
+つまり、必要なプレハブをシーン上に配置したり、どのオブジェクトに必要なコンポーネントがアタッチされているかをエディタ画面で探すことなく、スクリプタブルに依存関係を設定することができます。  
 ユーザーが手動で依存関係をエディタから設定したり、複雑なエディタ拡張機能を作成する必要はありません。
 
 ## Advanced Usage (call udon process at build time)
@@ -206,31 +219,31 @@ public class BuildDateKeeper : UdonSharpBehaviour {
     builddate = DateTime.Now.ToString();
   }
 #endif
+}
+```
 
-#if UNITY_EDITOR
-  public class Builder : IProcessSceneWithReport {
-    public int callbackOrder => 0;
+合わせて以下のスクリプトを作成し `BuildDateKeeper` コンポーネントと同じ場所に `SceneScope` コンポーネントと作成したスクリプトを追加します。
 
-    public void OnProcessScene(Scene scene, BuildReport report) {
-      var context = new Context();
-      context.Enqueue(builder => {
-        builder.AddInHierarchy<BuildDateKeeper>();
+```csharp
+namespace MyPackage {
+  public class CustomInstaller : MonoBehaviour, IInstaller {
+    public void Install(ContainerBuilder containerBuilder) {
+      containerBuilder.UseComponents(transform, builder => {
+        builder.RegisterInHierarchy<BuildDateKeeper>();
       });
-      context.Build();
     }
   }
-#endif
 }
 ```
 
 この例では、 `BuildDateKeeper` の builddate フィールドににビルド日時が埋め込まれます。  
-埋め込みに使用される `CalledAtBuildTime()` メソッドはアップロードされたワールドデータには含まれないため、無駄なアップロードサイズや実行時の負荷はありません。
+埋め込みに使用される `CalledAtBuildTime()` メソッドはアップロードされたワールドデータには含まれないため、無駄なアップロードサイズや実行時の負荷はありません。  
+また例のように UNITY_EDITOR 属性を付与しておけば `AddComponent()` などの Udon 環境で利用不可能な処理を実行することができます。
 
 ## Credits
 
-Sardinject is inspired by:
-
-- [VContainer](https://github.com/hadashiA/VContainer)
+- [VContainer](https://github.com/hadashiA/VContainer)  
+システム全体の設計を参考にさせて頂きました。
 
 ## Author
 
