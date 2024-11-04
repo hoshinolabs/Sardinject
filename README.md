@@ -85,7 +85,7 @@ public class CustomInstaller : MonoBehaviour, IInstaller {
   public void Install(ContainerBuilder containerBuilder) {
     containerBuilder.UseComponents(transform, builder => {
       builder.RegisterOnNewGameObject<Sardine>(Lifetime.Cached);
-      builder.RegisterInHierarchy<StartupGreeting>(Lifetime.Cached);
+      builder.RegisterInHierarchy<StartupGreeting>();
     });
   }
 }
@@ -127,7 +127,7 @@ public class CustomInstaller : MonoBehaviour, IInstaller {
   public void Install(ContainerBuilder containerBuilder) {
     containerBuilder.UseComponents(transform, builder => {
       builder.RegisterOnNewGameObject<Sardine>(Lifetime.Cached);
-      builder.RegisterInHierarchy<StartupGreeting>(Lifetime.Cached);
+      builder.RegisterInHierarchy<StartupGreeting>();
     });
   }
 }
