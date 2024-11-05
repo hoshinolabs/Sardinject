@@ -1,5 +1,4 @@
-﻿#if UDONSHARP
-using System;
+﻿using System;
 using UdonSharp;
 using UnityEngine;
 
@@ -14,4 +13,3 @@ namespace HoshinoLabs.Sardinject.Udon {
         public virtual void Inject(object instance) { }
     }
 }
-#endif

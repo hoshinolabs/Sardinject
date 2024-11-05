@@ -1,4 +1,3 @@
-#if UDONSHARP
 using UdonSharp;
 using UnityEngine;
 using VRC.SDK3.Data;
@@ -138,4 +137,3 @@ namespace HoshinoLabs.Sardinject.Udon {
         }
     }
 }
-#endif

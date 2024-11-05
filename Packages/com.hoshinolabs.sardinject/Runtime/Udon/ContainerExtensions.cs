@@ -1,7 +1,4 @@
-#if UDONSHARP
 using UdonSharp;
-using UnityEngine;
-using VRC.SDK3.Data;
 
 namespace HoshinoLabs.Sardinject.Udon {
     public static class ContainerExtensions {
@@ -14,4 +11,3 @@ namespace HoshinoLabs.Sardinject.Udon {
         }
     }
 }
-#endif
