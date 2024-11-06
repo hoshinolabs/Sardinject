@@ -9,8 +9,6 @@ Sardinject は <a href="https://unity.com/">Unity C#</a>、<a href="https://udon
 
 ## Features
 
-- マルチシーン対応
-
 ## Documentation
 
 ~~View on [GitHub Pages](https://sardinject.github.io)~~

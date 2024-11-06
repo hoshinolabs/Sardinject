@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+#if UDONSHARP
+using UdonSharp;
+#endif
 
 namespace HoshinoLabs.Sardinject {
     public sealed class Injector {
@@ -22,6 +25,11 @@ namespace HoshinoLabs.Sardinject {
             InjectFields(instance, container, parameters);
             InjectProperties(instance, container, parameters);
             InjectMethods(instance, container, parameters);
+#if UDONSHARP
+            if (typeof(UdonSharpBehaviour).IsAssignableFrom(instance.GetType())) {
+                UdonSharpBehaviourExtensions.ApplyProxyModifications((UdonSharpBehaviour)instance);
+            }
+#endif
         }
 
         void InjectFields(object instance, Container container, IReadOnlyDictionary<object, IResolver> parameters) {

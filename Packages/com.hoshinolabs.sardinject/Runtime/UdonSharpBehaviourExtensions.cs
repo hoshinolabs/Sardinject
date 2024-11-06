@@ -2,7 +2,9 @@
 using System;
 using System.Reflection;
 using UdonSharp;
+#if UNITY_EDITOR
 using UdonSharpEditor;
+#endif
 using VRC.Udon;
 
 namespace HoshinoLabs.Sardinject {
@@ -13,6 +15,7 @@ namespace HoshinoLabs.Sardinject {
         }
 
         public static void ApplyProxyModifications(this UdonSharpBehaviour self) {
+#if UNITY_EDITOR
             var udon = UdonSharpEditorUtility.GetBackingUdonBehaviour(self);
             var ClearBehaviourVariablesMethod = typeof(UdonSharpEditorUtility).GetMethod("ClearBehaviourVariables", BindingFlags.Static | BindingFlags.NonPublic);
             ClearBehaviourVariablesMethod.Invoke(null, new object[] { udon, true });
@@ -21,6 +24,7 @@ namespace HoshinoLabs.Sardinject {
             UdonSharpEditorUtility.CopyProxyToUdon(self, serializationPolicy);
             var serializePublicVariablesMethod = typeof(UdonBehaviour).GetMethod("SerializePublicVariables", BindingFlags.Instance | BindingFlags.NonPublic);
             serializePublicVariablesMethod.Invoke(udon, Array.Empty<object>());
+#endif
         }
     }
 }

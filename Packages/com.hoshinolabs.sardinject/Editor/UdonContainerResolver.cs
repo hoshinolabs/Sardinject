@@ -3,11 +3,14 @@ using HoshinoLabs.Sardinject.Udon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UdonSharp;
 using UdonSharp.Internal;
 using UdonSharpEditor;
+using UnityEditor;
 using UnityEngine;
 using VRC.SDK3.Data;
+using VRC.Udon;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class UdonContainerResolver : IResolver {
@@ -318,8 +321,8 @@ namespace HoshinoLabs.Sardinject {
             usharp.SetPublicVariable("_i12", typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.Id).ToArray()).ToArray()).ToArray());
             usharp.SetPublicVariable("_i13", typeInfos.Select(x => x.Methods.Select(x => x.Symbol).ToArray()).ToArray());
             usharp.SetPublicVariable("_i14", typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.Symbol).ToArray()).ToArray()).ToArray());
-            usharp.SetPublicVariable("_u0", transform.gameObject.scene.GetRootGameObjects());
-            UdonSharpEditorUtility.CopyProxyToUdon(usharp, ProxySerializationPolicy.All);
+            usharp.SetPublicVariable("_u0", transform?.gameObject.scene.GetRootGameObjects() ?? Array.Empty<GameObject>());
+            usharp.ApplyProxyModifications();
             return usharp;
         }
     }
