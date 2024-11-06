@@ -3,8 +3,8 @@ using UdonSharp;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject.Udon {
-    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     [AddComponentMenu("")]
+    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public abstract class IContainer : UdonSharpBehaviour {
         public static Type ImplementationType => typeof(Container);
 

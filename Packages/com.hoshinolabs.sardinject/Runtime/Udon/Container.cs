@@ -5,8 +5,8 @@ using VRC.SDK3.Data;
 using VRC.Udon;
 
 namespace HoshinoLabs.Sardinject.Udon {
-    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     [AddComponentMenu("")]
+    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     internal sealed partial class Container : IContainer {
         [SerializeField, HideInInspector]
         string[] _0;
