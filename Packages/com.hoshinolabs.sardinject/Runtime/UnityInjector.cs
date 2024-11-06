@@ -41,7 +41,7 @@ namespace HoshinoLabs.Sardinject {
             foreach (var scope in scopes) {
                 scope.InstallTo(builder);
             }
-            Installers.Invoke(builder);
+            Installers?.Invoke(builder);
             return builder.Build();
         }
 
@@ -57,7 +57,7 @@ namespace HoshinoLabs.Sardinject {
                     }
                     GameObject.DestroyImmediate(scope);
                 }
-                Installers.Invoke(builder);
+                Installers?.Invoke(builder);
             });
         }
 
@@ -73,7 +73,6 @@ namespace HoshinoLabs.Sardinject {
                 return Array.Empty<Container>();
             }
             var container = rootContainer.Scope(builder => {
-                // TODO: ‚±‚ê‚¾‚ÆŠK‘w‚ğˆÛ‚Å‚«‚È‚¢‚æ‚¤‚ÈcH
                 var scopes = hierarchy.GetComponents<HierarchyScope>();
                 foreach (var scope in scopes) {
                     scope.InstallTo(builder);
@@ -82,7 +81,7 @@ namespace HoshinoLabs.Sardinject {
                     }
                     GameObject.DestroyImmediate(scope);
                 }
-                Installers.Invoke(builder);
+                Installers?.Invoke(builder);
             });
             var containers = Enumerable.Range(0, transform.childCount)
                 .SelectMany(x => BuildHierarchyContainers(container, transform.GetChild(x)))

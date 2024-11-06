@@ -1,3 +1,4 @@
+#if UDONSHARP
 using HoshinoLabs.Sardinject.Udon;
 using UnityEditor;
 using UnityEngine;
@@ -24,3 +25,4 @@ namespace HoshinoLabs.Sardinject {
         }
     }
 }
+#endif

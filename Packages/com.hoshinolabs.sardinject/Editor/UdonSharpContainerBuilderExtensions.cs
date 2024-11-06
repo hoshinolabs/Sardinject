@@ -1,3 +1,4 @@
+#if UDONSHARP
 using HoshinoLabs.Sardinject.Udon;
 
 namespace HoshinoLabs.Sardinject {
@@ -11,3 +12,4 @@ namespace HoshinoLabs.Sardinject {
         }
     }
 }
+#endif

@@ -32,7 +32,7 @@ namespace HoshinoLabs.Sardinject {
         }
 
         static void SceneLoaded(Scene scene) {
-            OnSceneLoaded.Invoke(scene);
+            OnSceneLoaded?.Invoke(scene);
         }
     }
 }
