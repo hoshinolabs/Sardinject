@@ -8,33 +8,23 @@ namespace HoshinoLabs.Sardinject {
     public static class UnityInjector {
         public static event Action<ContainerBuilder> Installers;
 
+        static Container projectContainer;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void OnSubsystemRegistration() {
-            var sw = new Stopwatch();
-            sw.Start();
-            var projectContainer = BuildProjectContainer();
-            sw.Stop();
-            Logger.Log($"Build of project container finished in {sw.Elapsed.TotalMilliseconds}ms");
+            projectContainer = BuildProjectContainer();
 
-            void _SceneLoaded(Scene scene) {
-                sw.Start();
-                var sceneContainer = BuildSceneContainer(projectContainer, scene);
-                sw.Stop();
-                Logger.Log($"Build of scene container finished in {sw.Elapsed.TotalMilliseconds}ms");
+            SceneInjector.OnSceneLoaded -= SceneLoaded;
+            SceneInjector.OnSceneLoaded += SceneLoaded;
+        }
 
-                sw.Start();
-                var containers = BuildHierarchyContainers(sceneContainer, scene);
-                sw.Stop();
-                if (0 < containers.Length) {
-                    Logger.Log($"Builds of {containers.Length} hierarchy containers finished in {sw.Elapsed.TotalMilliseconds}ms");
-                }
-            };
-
-            SceneInjector.OnSceneLoaded -= _SceneLoaded;
-            SceneInjector.OnSceneLoaded += _SceneLoaded;
+        static void SceneLoaded(Scene scene) {
+            var sceneContainer = BuildSceneContainer(projectContainer, scene);
+            BuildHierarchyContainers(sceneContainer, scene);
         }
 
         static Container BuildProjectContainer() {
+            var sw = Stopwatch.StartNew();
             var builder = new ContainerBuilder();
             var scopes = Resources.LoadAll<ProjectScope>(string.Empty)
                 .Where(x => x.gameObject.activeSelf);
@@ -42,11 +32,14 @@ namespace HoshinoLabs.Sardinject {
                 scope.InstallTo(builder);
             }
             Installers?.Invoke(builder);
-            return builder.Build();
+            var container = builder.Build();
+            Logger.Log($"Build of project container finished in {sw.Elapsed.TotalMilliseconds}ms");
+            return container;
         }
 
         static Container BuildSceneContainer(Container projectContainer, Scene scene) {
-            return projectContainer.Scope(builder => {
+            var sw = Stopwatch.StartNew();
+            var container = projectContainer.Scope(builder => {
                 var scopes = scene.GetRootGameObjects()
                     .SelectMany(x => x.GetComponentsInChildren<SceneScope>(true))
                     .Where(x => x.gameObject.activeSelf);
@@ -59,12 +52,19 @@ namespace HoshinoLabs.Sardinject {
                 }
                 Installers?.Invoke(builder);
             });
+            Logger.Log($"Build of scene container finished in {sw.Elapsed.TotalMilliseconds}ms");
+            return container;
         }
 
         static Container[] BuildHierarchyContainers(Container sceneContainer, Scene scene) {
-            return scene.GetRootGameObjects()
+            var sw = Stopwatch.StartNew();
+            var containers = scene.GetRootGameObjects()
                 .SelectMany(x => BuildHierarchyContainers(sceneContainer, x.transform))
                 .ToArray();
+            if (0 < containers.Length) {
+                Logger.Log($"Builds of {containers.Length} hierarchy containers finished in {sw.Elapsed.TotalMilliseconds}ms");
+            }
+            return containers;
         }
 
         static Container[] BuildHierarchyContainers(Container rootContainer, Transform transform) {

@@ -9,19 +9,11 @@ namespace HoshinoLabs.Sardinject {
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void OnBeforeSceneLoad() {
-            void _SceneLoaded(Scene scene, LoadSceneMode _) {
-                SceneLoaded(scene);
-            };
-
-            SceneManager.sceneLoaded -= _SceneLoaded;
-            SceneManager.sceneLoaded += _SceneLoaded;
+            SceneManager.sceneLoaded -= SceneLoaded;
+            SceneManager.sceneLoaded += SceneLoaded;
 
 #if UNITY_EDITOR
-            var enterPlayModeOptionsEnabled = UnityEditor.EditorSettings.enterPlayModeOptionsEnabled;
-            var enterPlayModeOptions = UnityEditor.EditorSettings.enterPlayModeOptions;
-            var manualSceneLoad = enterPlayModeOptionsEnabled
-                && enterPlayModeOptions.HasFlag(UnityEditor.EnterPlayModeOptions.DisableSceneReload);
-            if (manualSceneLoad) {
+            if (IsDisableScenereload) {
                 var scenes = Enumerable.Range(0, UnityEditor.SceneManagement.EditorSceneManager.sceneCount)
                     .Select(x => UnityEditor.SceneManagement.EditorSceneManager.GetSceneAt(x));
                 foreach (var scene in scenes) {
@@ -29,6 +21,21 @@ namespace HoshinoLabs.Sardinject {
                 }
             }
 #endif
+        }
+
+#if UNITY_EDITOR
+        static bool IsDisableScenereload {
+            get {
+                var enterPlayModeOptionsEnabled = UnityEditor.EditorSettings.enterPlayModeOptionsEnabled;
+                var enterPlayModeOptions = UnityEditor.EditorSettings.enterPlayModeOptions;
+                return enterPlayModeOptionsEnabled
+                    && enterPlayModeOptions.HasFlag(UnityEditor.EnterPlayModeOptions.DisableSceneReload);
+            }
+        }
+#endif
+
+        static void SceneLoaded(Scene scene, LoadSceneMode _) {
+            SceneLoaded(scene);
         }
 
         static void SceneLoaded(Scene scene) {
