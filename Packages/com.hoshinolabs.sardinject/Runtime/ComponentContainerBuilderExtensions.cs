@@ -11,6 +11,15 @@ namespace HoshinoLabs.Sardinject {
             configuration(new ComponentsBuilder(self, transform));
         }
 
+        public static void UseEntryPoints(this ContainerBuilder self, Action<EntryPointsBuilder> configuration) {
+            configuration(new EntryPointsBuilder(self));
+        }
+
+        public static ComponentBindingBuilder RegisterEntryPoint<T>(this ContainerBuilder self, Lifetime lifetime) where T : Component {
+            return self.RegisterComponent<T>(lifetime)
+                .EnsureBindingResolved(self);
+        }
+
         public static ComponentBindingBuilder RegisterComponent<T>(this ContainerBuilder self, Lifetime lifetime) where T : Component {
             var destination = new ComponentDestination();
             var resolverBuilder = new ComponentResolverBuilder(typeof(T), destination).OverrideScopeIfNeeded(self, lifetime);
@@ -22,15 +31,8 @@ namespace HoshinoLabs.Sardinject {
         public static ComponentBindingBuilder RegisterComponentInstance<T>(this ContainerBuilder self, T component) {
             var destination = new ComponentDestination();
             var resolverBuilder = new ExistenceComponentResolverBuilder(component.GetType(), component, destination).OverrideScopeIfNeeded(self, Lifetime.Cached);
-            var builder = new ComponentBindingBuilder(component.GetType(), resolverBuilder, destination);
-            var resolver = new Lazy<IResolver>();
-            builder.OnBindingBuilt += (binding) => {
-                resolver = new(binding.Resolver);
-            };
-            builder.As<T>();
-            self.OnContainerBuilt += (container) => {
-                resolver.Value.Resolve(container);
-            };
+            var builder = new ComponentBindingBuilder(component.GetType(), resolverBuilder, destination)
+                .EnsureBindingResolved(self);
             self.Register(builder);
             return builder;
         }
@@ -38,14 +40,8 @@ namespace HoshinoLabs.Sardinject {
         public static ComponentBindingBuilder RegisterComponentInHierarchy(this ContainerBuilder self, Type type) {
             var destination = new ComponentDestination();
             var resolverBuilder = new FindComponentResolverBuilder(type, destination).OverrideScopeIfNeeded(self, Lifetime.Cached);
-            var builder = new ComponentBindingBuilder(type, resolverBuilder, destination);
-            var resolver = new Lazy<IResolver>();
-            builder.OnBindingBuilt += (binding) => {
-                resolver = new(binding.Resolver);
-            };
-            self.OnContainerBuilt += (container) => {
-                resolver.Value.Resolve(container);
-            };
+            var builder = new ComponentBindingBuilder(type, resolverBuilder, destination)
+                .EnsureBindingResolved(self);
             self.Register(builder);
             return builder;
         }
@@ -53,14 +49,8 @@ namespace HoshinoLabs.Sardinject {
         public static ComponentBindingBuilder RegisterComponentInHierarchy<T>(this ContainerBuilder self) where T : Component {
             var destination = new ComponentDestination();
             var resolverBuilder = new FindComponentResolverBuilder(typeof(T), destination).OverrideScopeIfNeeded(self, Lifetime.Cached);
-            var builder = new ComponentBindingBuilder(typeof(T), resolverBuilder, destination);
-            var resolver = new Lazy<IResolver>();
-            builder.OnBindingBuilt += (binding) => {
-                resolver = new(binding.Resolver);
-            };
-            self.OnContainerBuilt += (container) => {
-                resolver.Value.Resolve(container);
-            };
+            var builder = new ComponentBindingBuilder(typeof(T), resolverBuilder, destination)
+                .EnsureBindingResolved(self);
             self.Register(builder);
             return builder;
         }

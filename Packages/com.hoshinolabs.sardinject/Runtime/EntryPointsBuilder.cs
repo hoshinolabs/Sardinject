@@ -2,18 +2,16 @@ using System;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    public sealed class ComponentsBuilder {
+    public sealed class EntryPointsBuilder {
         readonly ContainerBuilder containerBuilder;
-        readonly Transform transform;
 
-        public ComponentsBuilder(ContainerBuilder containerBuilder, Transform transform = null) {
+        public EntryPointsBuilder(ContainerBuilder containerBuilder) {
             this.containerBuilder = containerBuilder;
-            this.transform = transform;
         }
 
         public ComponentBindingBuilder Register<T>(Lifetime lifetime) where T : Component {
             return containerBuilder.RegisterComponent<T>(lifetime)
-                .UnderTransform(transform);
+                .EnsureBindingResolved(containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterComponent<T>(T component) {
@@ -21,33 +19,31 @@ namespace HoshinoLabs.Sardinject {
         }
 
         public ComponentBindingBuilder RegisterInHierarchy(Type type) {
-            return containerBuilder.RegisterComponentInHierarchy(type)
-                .UnderTransform(transform);
+            return containerBuilder.RegisterComponentInHierarchy(type);
         }
 
         public ComponentBindingBuilder RegisterInHierarchy<T>() where T : Component {
-            return containerBuilder.RegisterComponentInHierarchy<T>()
-                .UnderTransform(transform);
+            return containerBuilder.RegisterComponentInHierarchy<T>();
         }
 
         public ComponentBindingBuilder RegisterInNewPrefab(Type type, Lifetime lifetime, GameObject prefab) {
             return containerBuilder.RegisterComponentInNewPrefab(type, lifetime, prefab)
-                .UnderTransform(transform);
+                .EnsureBindingResolved(containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterInNewPrefab<T>(Lifetime lifetime, GameObject prefab) where T : Component {
             return containerBuilder.RegisterComponentInNewPrefab<T>(lifetime, prefab)
-                .UnderTransform(transform);
+                .EnsureBindingResolved(containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterOnNewGameObject(Type type, Lifetime lifetime, string gameObjectName = null) {
             return containerBuilder.RegisterComponentOnNewGameObject(type, lifetime, gameObjectName)
-                .UnderTransform(transform);
+                .EnsureBindingResolved(containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterOnNewGameObject<T>(Lifetime lifetime, string gameObjectName = null) where T : Component {
             return containerBuilder.RegisterComponentOnNewGameObject<T>(lifetime, gameObjectName)
-                .UnderTransform(transform);
+                .EnsureBindingResolved(containerBuilder);
         }
     }
 }
