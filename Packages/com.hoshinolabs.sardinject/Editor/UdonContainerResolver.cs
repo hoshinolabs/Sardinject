@@ -3,14 +3,11 @@ using HoshinoLabs.Sardinject.Udon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UdonSharp;
-using UdonSharp.Internal;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 using VRC.SDK3.Data;
-using VRC.Udon;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class UdonContainerResolver : IResolver {
@@ -290,6 +287,33 @@ namespace HoshinoLabs.Sardinject {
             );
         }
 
+        (string[] _0, object[][] _1) BuildResolverData() {
+            return (
+                _0: resolverDatas.Select(x => x.Signature).ToArray(),
+                _1: resolverDatas.Select(x => x.Args).ToArray()
+            );
+        }
+
+        (string[] _0, string[][] _1, string[][] _2, object[][] _3, string[][] _4, string[][] _5, object[][] _6, string[][] _7, string[][] _8, string[][] _9, string[][][] _10, string[][][] _11, object[][][] _12, string[][] _13, string[][][] _14) BuildTypeInfoData() {
+            return (
+                _0: typeInfos.Select(x => x.Type.FullName).ToArray(),
+                _1: typeInfos.Select(x => x.Fields.Select(x => x.FieldInfo.Name).ToArray()).ToArray(),
+                _2: typeInfos.Select(x => x.Fields.Select(x => x.FieldInfo.FieldType.FullName).ToArray()).ToArray(),
+                _3: typeInfos.Select(x => x.Fields.Select(x => x.Id).ToArray()).ToArray(),
+                _4: typeInfos.Select(x => x.Properties.Select(x => x.PropertyInfo.Name).ToArray()).ToArray(),
+                _5: typeInfos.Select(x => x.Properties.Select(x => x.PropertyInfo.PropertyType.FullName).ToArray()).ToArray(),
+                _6: typeInfos.Select(x => x.Properties.Select(x => x.Id).ToArray()).ToArray(),
+                _7: typeInfos.Select(x => x.Properties.Select(x => x.Method.Symbol).ToArray()).ToArray(),
+                _8: typeInfos.Select(x => x.Properties.Select(x => x.Method.Parameters.First().Symbol).ToArray()).ToArray(),
+                _9: typeInfos.Select(x => x.Methods.Select(x => x.MethodInfo.Name).ToArray()).ToArray(),
+                _10: typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.ParameterInfo.Name).ToArray()).ToArray()).ToArray(),
+                _11: typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.ParameterInfo.ParameterType.FullName).ToArray()).ToArray()).ToArray(),
+                _12: typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.Id).ToArray()).ToArray()).ToArray(),
+                _13: typeInfos.Select(x => x.Methods.Select(x => x.Symbol).ToArray()).ToArray(),
+                _14: typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.Symbol).ToArray()).ToArray()).ToArray()
+            );
+        }
+
         public object Resolve(Container container) {
             var gameObjectName = $"{IContainer.ImplementationType.Name} [{container.GetHashCode():x8}]";
             rootGo = new GameObject(gameObjectName);
@@ -299,28 +323,30 @@ namespace HoshinoLabs.Sardinject {
             }
             var usharp = (IContainer)rootGo.AddUdonSharpComponentEx(IContainer.ImplementationType, false);
             var containerData = BuildContainerData(container, usharp);
+            var resolverData = BuildResolverData();
+            var typeInfoData = BuildTypeInfoData();
             usharp.SetPublicVariable("_0", containerData._0);
             usharp.SetPublicVariable("_1", containerData._1);
             usharp.SetPublicVariable("_2", containerData._2);
             usharp.SetPublicVariable("_3", containerData._3);
             usharp.SetPublicVariable("_4", containerData._4);
-            usharp.SetPublicVariable("_r0", resolverDatas.Select(x => x.Signature).ToArray());
-            usharp.SetPublicVariable("_r1", resolverDatas.Select(x => x.Args).ToArray());
-            usharp.SetPublicVariable("_i0", typeInfos.Select(x => x.Type.FullName).ToArray());
-            usharp.SetPublicVariable("_i1", typeInfos.Select(x => x.Fields.Select(x => x.FieldInfo.Name).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i2", typeInfos.Select(x => x.Fields.Select(x => x.FieldInfo.FieldType.FullName).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i3", typeInfos.Select(x => x.Fields.Select(x => x.Id).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i4", typeInfos.Select(x => x.Properties.Select(x => x.PropertyInfo.Name).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i5", typeInfos.Select(x => x.Properties.Select(x => x.PropertyInfo.PropertyType.FullName).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i6", typeInfos.Select(x => x.Properties.Select(x => x.Id).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i7", typeInfos.Select(x => x.Properties.Select(x => x.Method.Symbol).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i8", typeInfos.Select(x => x.Properties.Select(x => x.Method.Parameters.First().Symbol).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i9", typeInfos.Select(x => x.Methods.Select(x => x.MethodInfo.Name).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i10", typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.ParameterInfo.Name).ToArray()).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i11", typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.ParameterInfo.ParameterType.FullName).ToArray()).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i12", typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.Id).ToArray()).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i13", typeInfos.Select(x => x.Methods.Select(x => x.Symbol).ToArray()).ToArray());
-            usharp.SetPublicVariable("_i14", typeInfos.Select(x => x.Methods.Select(x => x.Parameters.Select(x => x.Symbol).ToArray()).ToArray()).ToArray());
+            usharp.SetPublicVariable("_r0", resolverData._0);
+            usharp.SetPublicVariable("_r1", resolverData._1);
+            usharp.SetPublicVariable("_i0", typeInfoData._0);
+            usharp.SetPublicVariable("_i1", typeInfoData._1);
+            usharp.SetPublicVariable("_i2", typeInfoData._2);
+            usharp.SetPublicVariable("_i3", typeInfoData._3);
+            usharp.SetPublicVariable("_i4", typeInfoData._4);
+            usharp.SetPublicVariable("_i5", typeInfoData._5);
+            usharp.SetPublicVariable("_i6", typeInfoData._6);
+            usharp.SetPublicVariable("_i7", typeInfoData._7);
+            usharp.SetPublicVariable("_i8", typeInfoData._8);
+            usharp.SetPublicVariable("_i9", typeInfoData._9);
+            usharp.SetPublicVariable("_i10", typeInfoData._10);
+            usharp.SetPublicVariable("_i11", typeInfoData._11);
+            usharp.SetPublicVariable("_i12", typeInfoData._12);
+            usharp.SetPublicVariable("_i13", typeInfoData._13);
+            usharp.SetPublicVariable("_i14", typeInfoData._14);
             usharp.SetPublicVariable("_u0", transform?.gameObject.scene.GetRootGameObjects() ?? Array.Empty<GameObject>());
             usharp.ApplyProxyModifications();
             return usharp;
