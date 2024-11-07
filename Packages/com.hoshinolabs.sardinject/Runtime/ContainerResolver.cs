@@ -3,7 +3,7 @@ namespace HoshinoLabs.Sardinject {
         Container container;
 
         public ContainerResolver(ContainerBuilder containerBuilder) {
-            containerBuilder.OnContainerBuiltInternal += (container) => {
+            containerBuilder.OnContainerPreBuilt += (container) => {
                 this.container = container;
             };
         }

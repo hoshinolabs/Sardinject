@@ -5,7 +5,7 @@ namespace HoshinoLabs.Sardinject {
 
         public OverrideCachedScopeResolver(IResolver resolver, ContainerBuilder containerBuilder) {
             Resolver = resolver;
-            containerBuilder.OnContainerBuiltInternal += (container) => {
+            containerBuilder.OnContainerPreBuilt += (container) => {
                 Container = container;
             };
         }

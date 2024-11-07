@@ -4,7 +4,7 @@ namespace HoshinoLabs.Sardinject {
     public class ContainerBuilder {
         readonly RegistryBuilder registryBuilder = new();
 
-        internal event Action<Container> OnContainerBuiltInternal;
+        public event Action<Container> OnContainerPreBuilt;
         public event Action<Container> OnContainerBuilt;
 
         public ContainerBuilder() {
@@ -23,7 +23,7 @@ namespace HoshinoLabs.Sardinject {
             var registry = registryBuilder.Build();
             OverrideContainerInjection(ref registry);
             var container = new Container(registry);
-            OnContainerBuiltInternal?.Invoke(container);
+            OnContainerPreBuilt?.Invoke(container);
             OnContainerBuilt?.Invoke(container);
             return container;
         }

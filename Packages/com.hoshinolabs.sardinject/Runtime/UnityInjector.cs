@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 namespace HoshinoLabs.Sardinject {
     public static class UnityInjector {
         public static event Action<ContainerBuilder> Installers;
+        public static event Action<Container> OnProjectContainerBuilt;
+        public static event Action<Scene, Container> OnSceneContainerBuilt;
+        public static event Action<Transform, Container> OnHierarchyContainerBuilt;
 
         static Container projectContainer;
 
@@ -33,6 +36,7 @@ namespace HoshinoLabs.Sardinject {
             }
             Installers?.Invoke(builder);
             var container = builder.Build();
+            OnProjectContainerBuilt?.Invoke(container);
             Logger.Log($"Build of project container finished in {sw.Elapsed.TotalMilliseconds}ms");
             return container;
         }
@@ -52,6 +56,7 @@ namespace HoshinoLabs.Sardinject {
                 }
                 Installers?.Invoke(builder);
             });
+            OnSceneContainerBuilt?.Invoke(scene, container);
             Logger.Log($"Build of scene container finished in {sw.Elapsed.TotalMilliseconds}ms");
             return container;
         }
@@ -83,6 +88,7 @@ namespace HoshinoLabs.Sardinject {
                 }
                 Installers?.Invoke(builder);
             });
+            OnHierarchyContainerBuilt?.Invoke(transform, container);
             var containers = Enumerable.Range(0, transform.childCount)
                 .SelectMany(x => BuildHierarchyContainers(container, transform.GetChild(x)))
                 .ToList();

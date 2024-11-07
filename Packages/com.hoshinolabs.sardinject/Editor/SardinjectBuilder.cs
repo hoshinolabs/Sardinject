@@ -9,8 +9,8 @@ namespace HoshinoLabs.Sardinject {
         public override void OnBuildProcessScene(Scene scene) {
             var onSubsystemRegistrationMethod = typeof(UnityInjector).GetMethod("OnSubsystemRegistration", BindingFlags.Static | BindingFlags.NonPublic);
             onSubsystemRegistrationMethod.Invoke(null, Array.Empty<object>());
-            var sceneLoadedMethod = typeof(SceneInjector).GetMethod("SceneLoaded", BindingFlags.Static | BindingFlags.NonPublic);
-            sceneLoadedMethod.Invoke(null, new object[] { scene });
+            var onBeforeSceneLoadMethod = typeof(SceneInjector).GetMethod("OnBeforeSceneLoad", BindingFlags.Static | BindingFlags.NonPublic);
+            onBeforeSceneLoadMethod.Invoke(null, Array.Empty<object>());
         }
     }
 }
