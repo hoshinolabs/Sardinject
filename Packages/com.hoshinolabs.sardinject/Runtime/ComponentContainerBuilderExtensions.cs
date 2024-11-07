@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     public static class ComponentContainerBuilderExtensions {
+        public static void UseEntryPoints(this ContainerBuilder self, Action<EntryPointsBuilder> configuration) {
+            configuration(new EntryPointsBuilder(self));
+        }
+
         public static void UseComponents(this ContainerBuilder self, Action<ComponentsBuilder> configuration) {
             configuration(new ComponentsBuilder(self));
         }
 
         public static void UseComponents(this ContainerBuilder self, Transform transform, Action<ComponentsBuilder> configuration) {
             configuration(new ComponentsBuilder(self, transform));
-        }
-
-        public static void UseEntryPoints(this ContainerBuilder self, Action<EntryPointsBuilder> configuration) {
-            configuration(new EntryPointsBuilder(self));
         }
 
         public static ComponentBindingBuilder RegisterEntryPoint<T>(this ContainerBuilder self, Lifetime lifetime) where T : Component {
