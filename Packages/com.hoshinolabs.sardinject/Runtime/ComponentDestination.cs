@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class ComponentDestination {
-        public IResolver Transform;
+        public IResolver Transform = new ParameterResolver(null);
         public bool DontDestroyOnLoad;
 
         public void ApplyDontDestroyOnLoadIfNeeded(Component component) {

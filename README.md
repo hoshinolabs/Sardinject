@@ -75,22 +75,19 @@ public class StartupGreeting : UdonSharpBehaviour {
 ```
 
 依存関係を記述したスクリプトを作成します。  
-シーン上にオブジェクトを作成し `StartupGreeting` コンポーネントを追加します。  
-あわせて `SceneScope` コンポーネントと作成したスクリプトを追加します。
+シーン上にオブジェクトを作成し `SceneScope` コンポーネントと `CustomInstaller` を追加します。
 
 ```csharp
 public class CustomInstaller : MonoBehaviour, IInstaller {
-  public void Install(ContainerBuilder containerBuilder) {
-    containerBuilder.UseComponents(transform, builder => {
-      builder.RegisterOnNewGameObject<Sardine>(Lifetime.Cached);
-      builder.RegisterInHierarchy<StartupGreeting>();
-    });
+  public void Install(ContainerBuilder builder) {
+    builder.RegisterComponentOnNewGameObject<Sardine>(Lifetime.Cached);
+    builder.RegisterEntryPoint<StartupGreeting>(Lifetime.Cached);
   }
 }
 ```
 
 この例では、`StartupGreeting` コンポーネントの sardine フィールドに `Sardine` コンポーネントが自動的に設定されます。  
-`Sardine` コンポーネントは自動的にシーン上に追加されます。
+`StartupGreeting` コンポーネントと `Sardine` コンポーネントは自動的にシーン上に追加されます。
 
 ## Advanced Usage (dynamic resolve)
 
@@ -116,22 +113,19 @@ public class StartupGreeting : UdonSharpBehaviour {
 }
 ```
 
-依存関係を記述したスクリプトを作成します。
-シーン上にオブジェクトを作成し `StartupGreeting` コンポーネントを追加します。  
-あわせて `SceneScope` コンポーネントと作成したスクリプトを追加します。
+依存関係を記述したスクリプトを作成します。  
+シーン上にオブジェクトを作成し `SceneScope` コンポーネントと `CustomInstaller` を追加します。
 
 ```csharp
 public class CustomInstaller : MonoBehaviour, IInstaller {
-  public void Install(ContainerBuilder containerBuilder) {
-    containerBuilder.UseComponents(transform, builder => {
-      builder.RegisterOnNewGameObject<Sardine>(Lifetime.Cached);
-      builder.RegisterInHierarchy<StartupGreeting>();
-    });
+  public void Install(ContainerBuilder builder) {
+    builder.RegisterComponentOnNewGameObject<Sardine>(Lifetime.Cached);
+    builder.RegisterEntryPoint<StartupGreeting>(Lifetime.Cached);
   }
 }
 ```
 
-実行が開始されると動的に `Sardine` コンポーネントを取得します。  
+実行が開始されると `StartupGreeting` コンポーネントは動的に `Sardine` コンポーネントを取得します。  
 この際、 `Sardine` コンポーネントが自動的に生成され返却されます。  
 必要になるまで対象のオブジェクトを生成したくない場合に便利です。
 
@@ -155,10 +149,8 @@ namespace SomeonePackage {
 ```csharp
 namespace SomeonePackage {
   public class CustomInstaller : MonoBehaviour, IInstaller {
-    public void Install(ContainerBuilder containerBuilder) {
-      containerBuilder.UseComponents(transform, builder => {
-        builder.RegisterOnNewGameObject<SomeoneSardine>(Lifetime.Cached);
-      });
+    public void Install(ContainerBuilder builder) {
+      builder.RegisterComponentOnNewGameObject<SomeoneSardine>(Lifetime.Transient);
     }
   }
 }
@@ -185,10 +177,8 @@ namespace MyPackage {
 ```csharp
 namespace MyPackage {
   public class CustomInstaller : MonoBehaviour, IInstaller {
-    public void Install(ContainerBuilder containerBuilder) {
-      containerBuilder.UseComponents(transform, builder => {
-        builder.RegisterInHierarchy<MySardine>();
-      });
+    public void Install(ContainerBuilder builder) {
+      builder.RegisterComponentInHierarchy<MySardine>();
     }
   }
 }
@@ -225,10 +215,8 @@ public class BuildDateKeeper : UdonSharpBehaviour {
 ```csharp
 namespace MyPackage {
   public class CustomInstaller : MonoBehaviour, IInstaller {
-    public void Install(ContainerBuilder containerBuilder) {
-      containerBuilder.UseComponents(transform, builder => {
-        builder.RegisterInHierarchy<BuildDateKeeper>();
-      });
+    public void Install(ContainerBuilder builder) {
+      builder.RegisterComponentInHierarchy<BuildDateKeeper>();
     }
   }
 }

@@ -163,7 +163,7 @@ namespace HoshinoLabs.Sardinject {
         ResolverData BuildResolverData(FindComponentResolver resolver, Container container, IContainer usharp) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var componentType = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.ComponentType)
-                ? (object)UdonSharpInternalUtility.GetTypeName(resolver.ComponentType)
+                ? (object)resolver.ComponentType.FullName
                 : (object)resolver.ComponentType;
             var destination = BuildComponentDestinationData(resolver.Destination);
             var injectorIdx = AddOrBuildInjectTypeInfo(resolver.Injector.TypeInfo);
@@ -180,7 +180,7 @@ namespace HoshinoLabs.Sardinject {
         ResolverData BuildResolverData(NewPrefabComponentResolver resolver, Container container, IContainer usharp) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var componentType = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.ComponentType)
-                ? (object)UdonSharpInternalUtility.GetTypeName(resolver.ComponentType)
+                ? (object)resolver.ComponentType.FullName
                 : (object)resolver.ComponentType;
             var active = resolver.Prefab.activeSelf;
             if (active) {
@@ -207,7 +207,7 @@ namespace HoshinoLabs.Sardinject {
         ResolverData BuildResolverData(NewGameObjectComponentResolver resolver, Container container, IContainer usharp) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var componentType = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.ComponentType)
-                ? (object)UdonSharpInternalUtility.GetTypeName(resolver.ComponentType)
+                ? (object)resolver.ComponentType.FullName
                 : (object)resolver.ComponentType;
             var gameObjectName = string.IsNullOrEmpty(resolver.GameObjectName)
                 ? resolver.ComponentType.Name
