@@ -10,7 +10,7 @@ using UnityEngine;
 using VRC.SDK3.Data;
 
 namespace HoshinoLabs.Sardinject {
-    public sealed class UdonContainerResolver : IResolver {
+    internal sealed class UdonContainerResolver : IResolver {
         public readonly ComponentDestination Destination;
 
         GameObject rootGo;

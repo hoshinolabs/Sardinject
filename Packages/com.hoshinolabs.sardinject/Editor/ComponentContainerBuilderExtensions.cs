@@ -2,7 +2,7 @@
 using HoshinoLabs.Sardinject.Udon;
 
 namespace HoshinoLabs.Sardinject {
-    internal static class UdonSharpContainerBuilderExtensions {
+    internal static class ComponentContainerBuilderExtensions {
         public static ComponentBindingBuilder OverrideUdonContainerInjection(this ContainerBuilder self) {
             var destination = new ComponentDestination();
             var resolverBuilder = new UdonContainerResolverBuilder(destination).OverrideScopeIfNeeded(self, Lifetime.Cached);

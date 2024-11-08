@@ -17,7 +17,7 @@ namespace HoshinoLabs.Sardinject {
             builder.OverrideUdonContainerInjection()
                 .UnderTransform(() => {
                     if (rootGo == null) {
-                        rootGo = new GameObject($"__{typeof(IContainer).Namespace.Replace('.', '_')}__");
+                        rootGo = new GameObject($"__{typeof(UdonSharpInjector).Namespace.Replace('.', '_')}__");
                         rootGo.hideFlags = HideFlags.HideInHierarchy;
                     }
                     return rootGo.transform;

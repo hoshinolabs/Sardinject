@@ -2,9 +2,6 @@
 using System;
 using System.Reflection;
 using UdonSharp;
-#if UNITY_EDITOR
-using UdonSharpEditor;
-#endif
 using VRC.Udon;
 
 namespace HoshinoLabs.Sardinject {
@@ -16,12 +13,12 @@ namespace HoshinoLabs.Sardinject {
 
         public static void ApplyProxyModifications(this UdonSharpBehaviour self) {
 #if UNITY_EDITOR
-            var udon = UdonSharpEditorUtility.GetBackingUdonBehaviour(self);
-            var ClearBehaviourVariablesMethod = typeof(UdonSharpEditorUtility).GetMethod("ClearBehaviourVariables", BindingFlags.Static | BindingFlags.NonPublic);
+            var udon = UdonSharpEditor.UdonSharpEditorUtility.GetBackingUdonBehaviour(self);
+            var ClearBehaviourVariablesMethod = typeof(UdonSharpEditor.UdonSharpEditorUtility).GetMethod("ClearBehaviourVariables", BindingFlags.Static | BindingFlags.NonPublic);
             ClearBehaviourVariablesMethod.Invoke(null, new object[] { udon, true });
-            var preBuildSerializeField = typeof(ProxySerializationPolicy).GetField("PreBuildSerialize", BindingFlags.Static | BindingFlags.NonPublic);
-            var serializationPolicy = (ProxySerializationPolicy)preBuildSerializeField.GetValue(null);
-            UdonSharpEditorUtility.CopyProxyToUdon(self, serializationPolicy);
+            var preBuildSerializeField = typeof(UdonSharpEditor.ProxySerializationPolicy).GetField("PreBuildSerialize", BindingFlags.Static | BindingFlags.NonPublic);
+            var serializationPolicy = (UdonSharpEditor.ProxySerializationPolicy)preBuildSerializeField.GetValue(null);
+            UdonSharpEditor.UdonSharpEditorUtility.CopyProxyToUdon(self, serializationPolicy);
             var serializePublicVariablesMethod = typeof(UdonBehaviour).GetMethod("SerializePublicVariables", BindingFlags.Instance | BindingFlags.NonPublic);
             serializePublicVariablesMethod.Invoke(udon, Array.Empty<object>());
 #endif
