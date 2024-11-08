@@ -93,11 +93,11 @@ namespace HoshinoLabs.Sardinject {
             return idx;
         }
 
-        ResolverData BuildResolverData(OverrideCachedScopeResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(OverrideCachedScopeResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var resolverId = resolver.Resolver.GetHashCode();
-            var resolverIdx = AddOrBuildResolverData(resolver.Resolver, container, usharp);
-            var resolverContainer = resolver.Container == container ? usharp : resolver.Container.Resolve<IContainer>();
+            var resolverIdx = AddOrBuildResolverData(resolver.Resolver, container, ucontainer);
+            var resolverContainer = resolver.Container == container ? ucontainer : resolver.Container.Resolve<IContainer>();
             var args = new object[] {
                 resolverId,
                 resolverIdx,
@@ -106,10 +106,10 @@ namespace HoshinoLabs.Sardinject {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(OverrideSelfScopeResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(OverrideSelfScopeResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var resolverId = resolver.Resolver.GetHashCode();
-            var resolverIdx = AddOrBuildResolverData(resolver.Resolver, container, usharp);
+            var resolverIdx = AddOrBuildResolverData(resolver.Resolver, container, ucontainer);
             var args = new object[] {
                 resolverId,
                 resolverIdx
@@ -117,17 +117,17 @@ namespace HoshinoLabs.Sardinject {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(ContainerResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(ContainerResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             return new ResolverData(signature, null);
         }
 
-        ResolverData BuildResolverData(UdonContainerResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(UdonContainerResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             return new ResolverData(signature, null);
         }
 
-        ResolverData BuildResolverData(ExistenceInstanceResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(ExistenceInstanceResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var instance = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.Instance.GetType())
                 ? UdonSharpEditorUtility.GetBackingUdonBehaviour((UdonSharpBehaviour)resolver.Instance)
@@ -142,7 +142,7 @@ namespace HoshinoLabs.Sardinject {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(ExistenceComponentResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(ExistenceComponentResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var instance = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.Instance.GetType())
                 ? UdonSharpEditorUtility.GetBackingUdonBehaviour((UdonSharpBehaviour)resolver.Instance)
@@ -157,7 +157,7 @@ namespace HoshinoLabs.Sardinject {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(FindComponentResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(FindComponentResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var componentType = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.ComponentType)
                 ? (object)resolver.ComponentType.FullName
@@ -174,7 +174,7 @@ namespace HoshinoLabs.Sardinject {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(NewPrefabComponentResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(NewPrefabComponentResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var componentType = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.ComponentType)
                 ? (object)resolver.ComponentType.FullName
@@ -201,7 +201,7 @@ namespace HoshinoLabs.Sardinject {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(NewGameObjectComponentResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(NewGameObjectComponentResolver resolver, Container container, IContainer ucontainer) {
             var signature = $"__{resolver.GetType().FullName.Replace(".", "")}";
             var componentType = typeof(UdonSharpBehaviour).IsAssignableFrom(resolver.ComponentType)
                 ? (object)resolver.ComponentType.FullName
@@ -228,50 +228,50 @@ namespace HoshinoLabs.Sardinject {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(IResolver resolver, Container container, IContainer usharp) {
+        ResolverData BuildResolverData(IResolver resolver, Container container, IContainer ucontainer) {
             switch (resolver) {
                 case OverrideCachedScopeResolver overrideCachedScopeResolver: {
-                        return BuildResolverData(overrideCachedScopeResolver, container, usharp);
+                        return BuildResolverData(overrideCachedScopeResolver, container, ucontainer);
                     }
                 case OverrideSelfScopeResolver overrideSelfScopeResolver: {
-                        return BuildResolverData(overrideSelfScopeResolver, container, usharp);
+                        return BuildResolverData(overrideSelfScopeResolver, container, ucontainer);
                     }
                 case ContainerResolver containerResolver: {
-                        return BuildResolverData(containerResolver, container, usharp);
+                        return BuildResolverData(containerResolver, container, ucontainer);
                     }
                 case UdonContainerResolver udonContainerResolver: {
-                        return BuildResolverData(udonContainerResolver, container, usharp);
+                        return BuildResolverData(udonContainerResolver, container, ucontainer);
                     }
                 case ExistenceInstanceResolver existenceInstanceResolver: {
-                        return BuildResolverData(existenceInstanceResolver, container, usharp);
+                        return BuildResolverData(existenceInstanceResolver, container, ucontainer);
                     }
                 case ExistenceComponentResolver existenceComponentResolver: {
-                        return BuildResolverData(existenceComponentResolver, container, usharp);
+                        return BuildResolverData(existenceComponentResolver, container, ucontainer);
                     }
                 case FindComponentResolver findComponentResolver: {
-                        return BuildResolverData(findComponentResolver, container, usharp);
+                        return BuildResolverData(findComponentResolver, container, ucontainer);
                     }
                 case NewPrefabComponentResolver newPrefabComponentResolver: {
-                        return BuildResolverData(newPrefabComponentResolver, container, usharp);
+                        return BuildResolverData(newPrefabComponentResolver, container, ucontainer);
                     }
                 case NewGameObjectComponentResolver newGameObjectComponentResolver: {
-                        return BuildResolverData(newGameObjectComponentResolver, container, usharp);
+                        return BuildResolverData(newGameObjectComponentResolver, container, ucontainer);
                     }
             }
             Logger.LogWarning($"Resolver type {resolver.GetType()} is not supported.");
             return new ResolverData(null, null);
         }
 
-        int AddOrBuildResolverData(IResolver resolver, Container container, IContainer usharp) {
-            resolverDatas.Add(BuildResolverData(resolver, container, usharp));
+        int AddOrBuildResolverData(IResolver resolver, Container container, IContainer ucontainer) {
+            resolverDatas.Add(BuildResolverData(resolver, container, ucontainer));
             return resolverDatas.Count() - 1;
         }
 
-        (string[] _0, object[][] _1, int[][] _2, object[][] _3, int[][] _4) BuildContainerData(Container container, IContainer usharp) {
+        (string[] _0, object[][] _1, int[][] _2, object[][] _3, int[][] _4) BuildContainerData(Container container, IContainer ucontainer) {
             var containerData = container.Registry.Data
                 .ToDictionary(x => x.Key.FullName, x => {
                     return x.Value.Select(x => {
-                        var resolverIdx = AddOrBuildResolverData(x.Resolver, container, usharp);
+                        var resolverIdx = AddOrBuildResolverData(x.Resolver, container, ucontainer);
                         return (
                             _0: x.Id,
                             _1: resolverIdx
@@ -321,35 +321,35 @@ namespace HoshinoLabs.Sardinject {
             if (transform != null) {
                 rootGo.transform.SetParent(transform);
             }
-            var usharp = (IContainer)rootGo.AddUdonSharpComponentEx(IContainer.ImplementationType, false);
-            var containerData = BuildContainerData(container, usharp);
+            var ucontainer = (IContainer)rootGo.AddUdonSharpComponentEx(IContainer.ImplementationType, false);
+            var containerData = BuildContainerData(container, ucontainer);
             var resolverData = BuildResolverData();
             var typeInfoData = BuildTypeInfoData();
-            usharp.SetPublicVariable("_0", containerData._0);
-            usharp.SetPublicVariable("_1", containerData._1);
-            usharp.SetPublicVariable("_2", containerData._2);
-            usharp.SetPublicVariable("_3", containerData._3);
-            usharp.SetPublicVariable("_4", containerData._4);
-            usharp.SetPublicVariable("_r0", resolverData._0);
-            usharp.SetPublicVariable("_r1", resolverData._1);
-            usharp.SetPublicVariable("_i0", typeInfoData._0);
-            usharp.SetPublicVariable("_i1", typeInfoData._1);
-            usharp.SetPublicVariable("_i2", typeInfoData._2);
-            usharp.SetPublicVariable("_i3", typeInfoData._3);
-            usharp.SetPublicVariable("_i4", typeInfoData._4);
-            usharp.SetPublicVariable("_i5", typeInfoData._5);
-            usharp.SetPublicVariable("_i6", typeInfoData._6);
-            usharp.SetPublicVariable("_i7", typeInfoData._7);
-            usharp.SetPublicVariable("_i8", typeInfoData._8);
-            usharp.SetPublicVariable("_i9", typeInfoData._9);
-            usharp.SetPublicVariable("_i10", typeInfoData._10);
-            usharp.SetPublicVariable("_i11", typeInfoData._11);
-            usharp.SetPublicVariable("_i12", typeInfoData._12);
-            usharp.SetPublicVariable("_i13", typeInfoData._13);
-            usharp.SetPublicVariable("_i14", typeInfoData._14);
-            usharp.SetPublicVariable("_u0", transform?.gameObject.scene.GetRootGameObjects() ?? Array.Empty<GameObject>());
-            usharp.ApplyProxyModifications();
-            return usharp;
+            ucontainer.SetPublicVariable("_0", containerData._0);
+            ucontainer.SetPublicVariable("_1", containerData._1);
+            ucontainer.SetPublicVariable("_2", containerData._2);
+            ucontainer.SetPublicVariable("_3", containerData._3);
+            ucontainer.SetPublicVariable("_4", containerData._4);
+            ucontainer.SetPublicVariable("_r0", resolverData._0);
+            ucontainer.SetPublicVariable("_r1", resolverData._1);
+            ucontainer.SetPublicVariable("_i0", typeInfoData._0);
+            ucontainer.SetPublicVariable("_i1", typeInfoData._1);
+            ucontainer.SetPublicVariable("_i2", typeInfoData._2);
+            ucontainer.SetPublicVariable("_i3", typeInfoData._3);
+            ucontainer.SetPublicVariable("_i4", typeInfoData._4);
+            ucontainer.SetPublicVariable("_i5", typeInfoData._5);
+            ucontainer.SetPublicVariable("_i6", typeInfoData._6);
+            ucontainer.SetPublicVariable("_i7", typeInfoData._7);
+            ucontainer.SetPublicVariable("_i8", typeInfoData._8);
+            ucontainer.SetPublicVariable("_i9", typeInfoData._9);
+            ucontainer.SetPublicVariable("_i10", typeInfoData._10);
+            ucontainer.SetPublicVariable("_i11", typeInfoData._11);
+            ucontainer.SetPublicVariable("_i12", typeInfoData._12);
+            ucontainer.SetPublicVariable("_i13", typeInfoData._13);
+            ucontainer.SetPublicVariable("_i14", typeInfoData._14);
+            ucontainer.SetPublicVariable("_u0", transform?.gameObject.scene.GetRootGameObjects() ?? Array.Empty<GameObject>());
+            ucontainer.ApplyProxyModifications();
+            return ucontainer;
         }
     }
 }

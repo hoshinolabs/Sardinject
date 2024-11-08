@@ -1,10 +1,9 @@
 #if UDONSHARP
-using HoshinoLabs.Sardinject.Udon;
 using UnityEditor;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    internal static class UdonSharpInjector {
+    internal static class UdonContainerInjector {
         static GameObject rootGo;
 
         [InitializeOnLoadMethod]
@@ -17,7 +16,7 @@ namespace HoshinoLabs.Sardinject {
             builder.OverrideUdonContainerInjection()
                 .UnderTransform(() => {
                     if (rootGo == null) {
-                        rootGo = new GameObject($"__{typeof(UdonSharpInjector).Namespace.Replace('.', '_')}__");
+                        rootGo = new GameObject($"__{typeof(UdonContainerInjector).Namespace.Replace('.', '_')}__");
                         rootGo.hideFlags = HideFlags.HideInHierarchy;
                     }
                     return rootGo.transform;

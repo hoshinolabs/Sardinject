@@ -1,4 +1,3 @@
-#if UDONSHARP
 using System;
 using UdonSharp.Lib.Internal;
 using UnityEngine;
@@ -85,4 +84,3 @@ namespace HoshinoLabs.Sardinject.Udon {
 //        }
     }
 }
-#endif
