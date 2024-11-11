@@ -1,3 +1,4 @@
+#if UDONSHARP
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
@@ -9,3 +10,4 @@ namespace HoshinoLabs.Sardinject {
         }
     }
 }
+#endif

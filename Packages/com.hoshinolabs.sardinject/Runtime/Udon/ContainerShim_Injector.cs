@@ -6,7 +6,7 @@ using VRC.SDK3.Data;
 using VRC.Udon;
 
 namespace HoshinoLabs.Sardinject.Udon {
-    internal sealed partial class Container {
+    internal sealed partial class ContainerShim {
         [SerializeField, HideInInspector]
         string[] _i0;
         [SerializeField, HideInInspector]

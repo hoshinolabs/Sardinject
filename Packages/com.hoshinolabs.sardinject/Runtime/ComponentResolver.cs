@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-#if UDONSHARP
-using UdonSharp;
-#endif
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
@@ -25,8 +22,8 @@ namespace HoshinoLabs.Sardinject {
                 ?? new GameObject(ComponentType.Name);
             go.SetActive(false);
 #if UDONSHARP
-            var component = typeof(UdonSharpBehaviour).IsAssignableFrom(ComponentType)
-                ? go.AddUdonSharpComponentEx(ComponentType, false)
+            var component = typeof(UdonSharp.UdonSharpBehaviour).IsAssignableFrom(ComponentType)
+                ? go.AddUdonSharpComponent(ComponentType, false)
                 : go.AddComponent(ComponentType);
 #else
             var component = go.AddComponent(ComponentType);

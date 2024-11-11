@@ -104,7 +104,7 @@ public class Sardine : UdonSharpBehaviour {
 ```csharp
 public class StartupGreeting : UdonSharpBehaviour {
   [Inject, SerializeField, HideInInspector]
-  IContainer container;
+  Container container;
 
   private void Start() {
     var sardine = container.Resolve<Sardine>();
@@ -201,9 +201,9 @@ public class BuildDateKeeper : UdonSharpBehaviour {
     Debug.Log($"Build was made `{builddate}`.")
   }
 
-#if UNITY_EDITOR
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
   [Inject]
-  void CalledAtBuildTime() {
+  void CalledAtBuildTimeOnly() {
     builddate = DateTime.Now.ToString();
   }
 #endif
@@ -222,9 +222,8 @@ namespace MyPackage {
 }
 ```
 
-この例では、 `BuildDateKeeper` の builddate フィールドににビルド日時が埋め込まれます。  
-埋め込みに使用される `CalledAtBuildTime()` メソッドはアップロードされたワールドデータには含まれないため、無駄なアップロードサイズや実行時の負荷はありません。  
-また例のように UNITY_EDITOR 属性を付与しておけば `AddComponent()` などの Udon 環境で利用不可能な処理を実行することができます。
+この例では `BuildDateKeeper` の builddate フィールドににビルド日時が埋め込まれます。  
+埋め込みに使用される `CalledAtBuildTimeOnly()` メソッドはアップロードされたワールドデータには含まれないため、無駄なアップロードサイズや実行時の負荷はありません。
 
 ## Credits
 

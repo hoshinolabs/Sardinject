@@ -6,8 +6,8 @@ using UdonSharp;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    internal static class UdonSharpComponentExtensions {
-        public static UdonSharpBehaviour AddUdonSharpComponentEx(this GameObject self, Type type, bool initialize) {
+    internal static class GameObjectExtensions {
+        public static UdonSharpBehaviour AddUdonSharpComponent(this GameObject self, Type type, bool initialize = true) {
             if (type == typeof(UdonSharpBehaviour)) {
                 throw new ArgumentException("Cannot add components of type 'UdonSharpBehaviour', you can only add subclasses of this type");
             }
@@ -35,8 +35,8 @@ namespace HoshinoLabs.Sardinject {
             return proxyBehaviour;
         }
 
-        public static T AddUdonSharpComponentEx<T>(this GameObject self, bool initialize) where T : UdonSharpBehaviour {
-            return (T)AddUdonSharpComponentEx(self, typeof(T), initialize);
+        public static T AddUdonSharpComponent<T>(this GameObject self, bool initialize = true) where T : UdonSharpBehaviour {
+            return (T)AddUdonSharpComponent(self, typeof(T), initialize);
         }
     }
 }

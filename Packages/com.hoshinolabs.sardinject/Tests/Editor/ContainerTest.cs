@@ -98,9 +98,9 @@ namespace HoshinoLabs.Sardinject.Tests {
         }
 
         class SimpleWithId : ISimple {
-            [Inject(Id = Kinds.Simple1)]
+            [Inject(Kinds.Simple1)]
             public readonly SimpleWithValue Simple1;
-            [Inject(Id = Kinds.Simple2)]
+            [Inject(Kinds.Simple2)]
             public readonly SimpleWithValue Simple2;
         }
 

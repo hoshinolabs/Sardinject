@@ -1,3 +1,4 @@
+#if UDONSHARP
 using System;
 
 namespace HoshinoLabs.Sardinject {
@@ -15,3 +16,4 @@ namespace HoshinoLabs.Sardinject {
         }
     }
 }
+#endif

@@ -22,11 +22,11 @@ namespace HoshinoLabs.Sardinject {
         static InjectConstructorInfo BuildConstructor(Type type) {
             var constructorInfos = type.GetConstructors(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .ToArray();
-            if (1 < constructorInfos.Count(x => x.IsDefined(typeof(InjectAttribute), false))) {
+            if (1 < constructorInfos.Count(x => x.IsInject())) {
                 throw new SardinjectException("Multiple constructors with the Inject attribute were found.");
             }
             var constructorInfo = constructorInfos
-                .OrderBy(x => x.IsDefined(typeof(InjectAttribute), false))
+                .OrderBy(x => x.IsInject())
                 .ThenByDescending(x => x.GetParameters().Length)
                 .First();
             var parameters = constructorInfo.GetParameters()
@@ -37,7 +37,7 @@ namespace HoshinoLabs.Sardinject {
 
         static InjectFieldInfo[] BuildFields(Type type) {
             var fields = type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(x => x.IsDefined(typeof(InjectAttribute), false))
+                .Where(x => x.IsInject())
                 .Select(x => BuildField(x));
             if (type.BaseType != null) {
                 fields = fields.Concat(BuildFields(type.BaseType));
@@ -46,13 +46,13 @@ namespace HoshinoLabs.Sardinject {
         }
 
         static InjectFieldInfo BuildField(FieldInfo fieldInfo) {
-            var attribute = fieldInfo.GetCustomAttribute<InjectAttribute>();
+            var attribute = fieldInfo.GetInjectAttribute();
             return new InjectFieldInfo(fieldInfo, attribute?.Id);
         }
 
         static InjectPropertyInfo[] BuildProperties(Type type) {
             var properties = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(x => x.IsDefined(typeof(InjectAttribute), false) && x.CanWrite)
+                .Where(x => x.IsInject() && x.CanWrite)
                 .Select(x => BuildProperty(x));
             if (type.BaseType != null) {
                 properties = properties.Concat(BuildProperties(type.BaseType));
@@ -61,13 +61,13 @@ namespace HoshinoLabs.Sardinject {
         }
 
         static InjectPropertyInfo BuildProperty(PropertyInfo propertyInfo) {
-            var attribute = propertyInfo.GetCustomAttribute<InjectAttribute>();
+            var attribute = propertyInfo.GetInjectAttribute();
             return new InjectPropertyInfo(propertyInfo, attribute?.Id);
         }
 
         static InjectMethodInfo[] BuildMethods(Type type) {
             var methods = type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(x => x.IsDefined(typeof(InjectAttribute), false))
+                .Where(x => x.IsInject())
                 .Select(x => BuildMethod(x));
             if (type.BaseType != null) {
                 methods = methods.Concat(BuildMethods(type.BaseType));
@@ -83,7 +83,7 @@ namespace HoshinoLabs.Sardinject {
         }
 
         static InjectParameterInfo BuildParameter(ParameterInfo parameterInfo) {
-            var attribute = parameterInfo.GetCustomAttribute<InjectAttribute>();
+            var attribute = parameterInfo.GetInjectAttribute();
             return new InjectParameterInfo(parameterInfo, attribute?.Id);
         }
     }

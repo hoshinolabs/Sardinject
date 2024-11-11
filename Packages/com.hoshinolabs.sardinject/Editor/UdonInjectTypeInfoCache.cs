@@ -1,3 +1,4 @@
+#if UDONSHARP
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace HoshinoLabs.Sardinject {
         }
 
         static InjectParameterInfo BuildParameter(ParameterInfo parameterInfo) {
-            var attribute = parameterInfo.GetCustomAttribute<InjectAttribute>();
+            var attribute = parameterInfo.GetInjectAttribute();
             return new InjectParameterInfo(parameterInfo, attribute?.Id);
         }
 
@@ -84,3 +85,4 @@ namespace HoshinoLabs.Sardinject {
         }
     }
 }
+#endif

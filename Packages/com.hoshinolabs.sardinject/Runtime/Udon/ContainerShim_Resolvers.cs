@@ -3,7 +3,7 @@ using UnityEngine;
 using VRC.SDK3.Data;
 
 namespace HoshinoLabs.Sardinject.Udon {
-    internal sealed partial class Container {
+    internal sealed partial class ContainerShim {
         [SerializeField, HideInInspector]
         string[] _r0;
         [SerializeField, HideInInspector]
@@ -24,7 +24,7 @@ namespace HoshinoLabs.Sardinject.Udon {
             var __0 = (int)_r_args[0];
             if (!_r_cache.TryGetValue(__0, out var value)) {
                 var __1 = (int)_r_args[1];
-                var __2 = (Container)_r_args[2];
+                var __2 = (ContainerShim)_r_args[2];
                 __2._r_args = _r1[__1];
                 __2.SendCustomEvent(_r0[__1]);
                 value = new DataToken(__2._r_ret);

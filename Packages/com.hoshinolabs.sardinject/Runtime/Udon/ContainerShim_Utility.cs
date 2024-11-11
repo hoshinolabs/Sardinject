@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject.Udon {
-    internal sealed partial class Container {
+    internal sealed partial class ContainerShim {
         [SerializeField, HideInInspector]
         GameObject[] _u0;
 

@@ -9,6 +9,7 @@ namespace HoshinoLabs.Sardinject.Udon {
             if (type.GetType() == typeof(Type)) {
                 return self.GetComponent((Type)type);
             }
+#if UDONSHARP
             var id = (string)type;
             foreach (var udon in self.GetComponents<UdonBehaviour>()) {
 #if UNITY_EDITOR
@@ -21,6 +22,7 @@ namespace HoshinoLabs.Sardinject.Udon {
                     return udon;
                 }
             }
+#endif
             return null;
         }
 
@@ -28,6 +30,7 @@ namespace HoshinoLabs.Sardinject.Udon {
             if (type.GetType() == typeof(Type)) {
                 return self.GetComponentInChildren((Type)type, includeInactive);
             }
+#if UDONSHARP
             var id = (string)type;
             foreach (var udon in self.GetComponentsInChildren<UdonBehaviour>(includeInactive)) {
 #if UNITY_EDITOR
@@ -40,6 +43,7 @@ namespace HoshinoLabs.Sardinject.Udon {
                     return udon;
                 }
             }
+#endif
             return null;
         }
 
@@ -47,6 +51,7 @@ namespace HoshinoLabs.Sardinject.Udon {
             if (type.GetType() == typeof(Type)) {
                 return self.GetComponentInChildren((Type)type);
             }
+#if UDONSHARP
             var id = (string)type;
             foreach (var udon in self.GetComponentsInChildren<UdonBehaviour>()) {
 #if UNITY_EDITOR
@@ -59,6 +64,7 @@ namespace HoshinoLabs.Sardinject.Udon {
                     return udon;
                 }
             }
+#endif
             return null;
         }
 
@@ -66,6 +72,7 @@ namespace HoshinoLabs.Sardinject.Udon {
 //            if (type.GetType() == typeof(Type)) {
 //                return self.GetComponentInParent((Type)type);
 //            }
+//#if UDONSHARP
 //            var id = (long)type;
 //            foreach (var udon in self.GetComponentsInParent<UdonBehaviour>()) {
 //#if UNITY_EDITOR
@@ -78,6 +85,7 @@ namespace HoshinoLabs.Sardinject.Udon {
 //                    return udon;
 //                }
 //            }
+//#endif
 //            return null;
 //        }
     }
