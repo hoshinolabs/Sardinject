@@ -1,4 +1,4 @@
-namespace HoshinoLabs.Sardinject {
+namespace HoshinoLabs.Sardinject.Udon {
     internal sealed class ResolverData {
         public readonly string Signature;
         public readonly object[] Args;

@@ -1,17 +1,15 @@
-#if UDONSHARP
 using System.Reflection;
 
-namespace HoshinoLabs.Sardinject {
-    internal sealed class UdonInjectParameterInfo {
+namespace HoshinoLabs.Sardinject.Udon {
+    internal sealed class InjectParameterInfo {
         public readonly ParameterInfo ParameterInfo;
         public readonly string Symbol;
         public readonly object Id;
 
-        public UdonInjectParameterInfo(ParameterInfo parameterInfo, string symbol, object id) {
+        public InjectParameterInfo(ParameterInfo parameterInfo, string symbol, object id) {
             ParameterInfo = parameterInfo;
             Symbol = symbol;
             Id = id;
         }
     }
 }
-#endif

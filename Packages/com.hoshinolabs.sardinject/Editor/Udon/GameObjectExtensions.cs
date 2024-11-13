@@ -1,11 +1,10 @@
-#if UDONSHARP
 using System;
 using System.Linq;
 using System.Reflection;
 using UdonSharp;
 using UnityEngine;
 
-namespace HoshinoLabs.Sardinject {
+namespace HoshinoLabs.Sardinject.Udon {
     internal static class GameObjectExtensions {
         public static UdonSharpBehaviour AddUdonSharpComponent(this GameObject self, Type type, bool initialize = true) {
             if (type == typeof(UdonSharpBehaviour)) {
@@ -40,4 +39,3 @@ namespace HoshinoLabs.Sardinject {
         }
     }
 }
-#endif

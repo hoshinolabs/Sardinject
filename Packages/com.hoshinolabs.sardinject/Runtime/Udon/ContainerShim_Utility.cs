@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HoshinoLabs.Sardinject.Udon {
     internal sealed partial class ContainerShim {
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         GameObject[] _u0;
 
         Component FindComponentInScene(object type) {

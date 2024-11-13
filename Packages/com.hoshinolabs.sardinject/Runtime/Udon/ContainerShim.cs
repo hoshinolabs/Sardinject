@@ -8,15 +8,15 @@ namespace HoshinoLabs.Sardinject.Udon {
     [AddComponentMenu("")]
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     internal sealed partial class ContainerShim : Container {
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[] _0;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         object[][] _1;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         int[][] _2;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         object[][] _3;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         int[][] _4;
 
         public override object Resolve(Type type) {

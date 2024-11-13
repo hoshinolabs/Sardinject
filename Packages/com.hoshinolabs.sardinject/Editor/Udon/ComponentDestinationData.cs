@@ -1,7 +1,6 @@
-#if UDONSHARP
 using UnityEngine;
 
-namespace HoshinoLabs.Sardinject {
+namespace HoshinoLabs.Sardinject.Udon {
     internal sealed class ComponentDestinationData {
         public readonly Transform Transform;
 
@@ -10,4 +9,3 @@ namespace HoshinoLabs.Sardinject {
         }
     }
 }
-#endif

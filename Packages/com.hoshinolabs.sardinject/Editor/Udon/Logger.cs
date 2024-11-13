@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HoshinoLabs.Sardinject {
+namespace HoshinoLabs.Sardinject.Udon {
     internal static class Logger {
         public static void Log(object message) {
             Debug.Log($"[<color=#47F1FF>Sardinject</color>] {message}");

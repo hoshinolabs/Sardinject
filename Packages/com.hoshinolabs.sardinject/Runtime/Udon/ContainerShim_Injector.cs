@@ -7,35 +7,35 @@ using VRC.Udon;
 
 namespace HoshinoLabs.Sardinject.Udon {
     internal sealed partial class ContainerShim {
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[] _i0;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i1;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i2;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         object[][] _i3;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i4;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i5;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         object[][] _i6;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i7;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i8;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i9;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][][] _i10;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][][] _i11;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         object[][][] _i12;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][] _i13;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[][][] _i14;
 
         void __Inject(object instance, DataDictionary parameters) {

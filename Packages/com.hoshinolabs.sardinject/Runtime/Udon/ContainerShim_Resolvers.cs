@@ -4,9 +4,9 @@ using VRC.SDK3.Data;
 
 namespace HoshinoLabs.Sardinject.Udon {
     internal sealed partial class ContainerShim {
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         string[] _r0;
-        [SerializeField, HideInInspector]
+        [Inject, SerializeField, HideInInspector]
         object[][] _r1;
 
         DataDictionary _r_cache = new DataDictionary();
