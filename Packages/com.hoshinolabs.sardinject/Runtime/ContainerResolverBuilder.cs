@@ -10,7 +10,7 @@ namespace HoshinoLabs.Sardinject {
             this.containerBuilder = containerBuilder;
         }
 
-        public IResolver Build() {
+        public IBindingResolver Build() {
             return new ContainerResolver(containerBuilder);
         }
     }

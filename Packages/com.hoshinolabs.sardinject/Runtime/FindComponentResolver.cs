@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace HoshinoLabs.Sardinject {
-    public class FindComponentResolver : IResolver {
+    public class FindComponentResolver : IBindingResolver {
         public readonly Type ComponentType;
         public readonly ComponentDestination Destination;
         public readonly Injector Injector;
@@ -17,7 +17,7 @@ namespace HoshinoLabs.Sardinject {
             Parameters = parameters;
         }
 
-        public object Resolve(Container container) {
+        public object Resolve(Type type, Container container) {
             var transform = Destination.Transform?.Resolve<Transform>(container);
             var component = transform?.GetComponentInChildren(ComponentType, true)
                 ?? FindComponentInScene();

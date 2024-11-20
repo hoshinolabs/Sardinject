@@ -11,5 +11,17 @@ namespace HoshinoLabs.Sardinject {
             }
             return self;
         }
+
+        public static IResolverBuilder OverrideScopeIfNeeded(this IGenericResolverBuilder self, ContainerBuilder builder, Lifetime lifetime) {
+            switch (lifetime) {
+                case Lifetime.Cached: {
+                        return new OverrideCachedScopeGenericResolverBuilder(self, builder);
+                    }
+                case Lifetime.Scoped: {
+                        return new OverrideSelfScopeGenericResolverBuilder(self);
+                    }
+            }
+            return self;
+        }
     }
 }

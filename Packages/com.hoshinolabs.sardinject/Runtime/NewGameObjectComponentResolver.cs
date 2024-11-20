@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    public sealed class NewGameObjectComponentResolver : IResolver {
+    public sealed class NewGameObjectComponentResolver : IBindingResolver {
         public readonly Type ComponentType;
         public readonly string GameObjectName;
         public readonly ComponentDestination Destination;
@@ -18,7 +18,7 @@ namespace HoshinoLabs.Sardinject {
             Parameters = parameters;
         }
 
-        public object Resolve(Container container) {
+        public object Resolve(Type type, Container container) {
             var gameObjectName = string.IsNullOrEmpty(GameObjectName)
                 ? ComponentType.Name
                 : GameObjectName;

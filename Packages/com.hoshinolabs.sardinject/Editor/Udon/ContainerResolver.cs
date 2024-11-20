@@ -8,7 +8,7 @@ using UnityEngine;
 using VRC.SDK3.Data;
 
 namespace HoshinoLabs.Sardinject.Udon {
-    internal sealed class ContainerResolver : IResolver {
+    internal sealed class ContainerResolver : IBindingResolver {
         public readonly ComponentDestination Destination;
 
         GameObject rootGo;
@@ -20,7 +20,7 @@ namespace HoshinoLabs.Sardinject.Udon {
             Destination = destination;
         }
 
-        public object Resolve(Sardinject.Container container) {
+        public object Resolve(Type type, Sardinject.Container container) {
             var transform = Destination.Transform.Resolve<Transform>(container);
             rootGo = transform.gameObject;
 
@@ -298,7 +298,7 @@ namespace HoshinoLabs.Sardinject.Udon {
             return new ResolverData(signature, args);
         }
 
-        ResolverData BuildResolverData(IResolver resolver, Sardinject.Container container, Container ucontainer) {
+        ResolverData BuildResolverData(IBindingResolver resolver, Sardinject.Container container, Container ucontainer) {
             switch (resolver) {
                 case OverrideCachedScopeResolver overrideCachedScopeResolver: {
                         return BuildResolverData(overrideCachedScopeResolver, container, ucontainer);
@@ -332,13 +332,13 @@ namespace HoshinoLabs.Sardinject.Udon {
             return new ResolverData(null, null);
         }
 
-        int AddOrBuildResolverData(IResolver resolver, Sardinject.Container container, Container ucontainer) {
+        int AddOrBuildResolverData(IBindingResolver resolver, Sardinject.Container container, Container ucontainer) {
             resolverDatas.Add(BuildResolverData(resolver, container, ucontainer));
             return resolverDatas.Count() - 1;
         }
 
         (string[] _0, object[][] _1, int[][] _2, object[][] _3, int[][] _4) BuildContainerData(Sardinject.Container container, Container ucontainer) {
-            var containerData = container.Registry.Data
+            var containerData = container.Registry.Bindings
                 .ToDictionary(x => x.Key.FullName, x => {
                     return x.Value.Select(x => {
                         var resolverIdx = AddOrBuildResolverData(x.Resolver, container, ucontainer);

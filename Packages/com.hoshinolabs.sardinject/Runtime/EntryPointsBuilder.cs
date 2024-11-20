@@ -11,7 +11,7 @@ namespace HoshinoLabs.Sardinject {
 
         public ComponentBindingBuilder Register<T>(Lifetime lifetime) where T : Component {
             return containerBuilder.RegisterComponent<T>(lifetime)
-                .EnsureBindingResolved(containerBuilder);
+                .EnsureBindingResolved<T>(containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterComponent<T>(T component) {
@@ -28,22 +28,22 @@ namespace HoshinoLabs.Sardinject {
 
         public ComponentBindingBuilder RegisterInNewPrefab(Type type, Lifetime lifetime, GameObject prefab) {
             return containerBuilder.RegisterComponentInNewPrefab(type, lifetime, prefab)
-                .EnsureBindingResolved(containerBuilder);
+                .EnsureBindingResolved(type, containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterInNewPrefab<T>(Lifetime lifetime, GameObject prefab) where T : Component {
             return containerBuilder.RegisterComponentInNewPrefab<T>(lifetime, prefab)
-                .EnsureBindingResolved(containerBuilder);
+                .EnsureBindingResolved<T>(containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterOnNewGameObject(Type type, Lifetime lifetime, string gameObjectName = null) {
             return containerBuilder.RegisterComponentOnNewGameObject(type, lifetime, gameObjectName)
-                .EnsureBindingResolved(containerBuilder);
+                .EnsureBindingResolved(type, containerBuilder);
         }
 
         public ComponentBindingBuilder RegisterOnNewGameObject<T>(Lifetime lifetime, string gameObjectName = null) where T : Component {
             return containerBuilder.RegisterComponentOnNewGameObject<T>(lifetime, gameObjectName)
-                .EnsureBindingResolved(containerBuilder);
+                .EnsureBindingResolved<T>(containerBuilder);
         }
     }
 }

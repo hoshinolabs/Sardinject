@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    public sealed class ComponentResolver : IResolver {
+    public sealed class ComponentResolver : IBindingResolver {
         public readonly Type ComponentType;
         ComponentDestination Destination;
         public readonly Injector Injector;
@@ -16,7 +16,7 @@ namespace HoshinoLabs.Sardinject {
             Parameters = parameters;
         }
 
-        public object Resolve(Container container) {
+        public object Resolve(Type type, Container container) {
             var transform = Destination.Transform?.Resolve<Transform>(container);
             var go = transform?.gameObject
                 ?? new GameObject(ComponentType.Name);

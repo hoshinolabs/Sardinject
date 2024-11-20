@@ -4,21 +4,24 @@ using System.Linq;
 
 namespace HoshinoLabs.Sardinject {
     public sealed class Registry {
-        public readonly IReadOnlyDictionary<Type, List<Binding>> Data;
+        public readonly IReadOnlyDictionary<Type, List<Binding>> Bindings;
 
         public Registry() {
-            Data = new Dictionary<Type, List<Binding>>();
+            Bindings = new Dictionary<Type, List<Binding>>();
         }
 
-        public Registry(IReadOnlyDictionary<Type, List<Binding>> data) {
-            Data = data;
+        public Registry(IReadOnlyDictionary<Type, List<Binding>> bindings) {
+            Bindings = bindings;
         }
 
         public IEnumerable<Binding> GetBindings(Type type) {
-            if (Data.TryGetValue(type, out var bindings)) {
-                return bindings;
+            if (type.IsConstructedGenericType) {
+                var genericType = type.GetGenericTypeDefinition();
+                return Bindings
+                    .Where(x => x.Key == type || x.Key == genericType)
+                    .SelectMany(x => x.Value);
             }
-            return Enumerable.Empty<Binding>();
+            return Bindings.GetValueOrDefault(type, new());
         }
     }
 }

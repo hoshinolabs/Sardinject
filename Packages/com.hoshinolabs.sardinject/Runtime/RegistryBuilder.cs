@@ -20,28 +20,28 @@ namespace HoshinoLabs.Sardinject {
         }
 
         public Registry Build() {
-            var bindings = builders
+            var data = builders
                 .ToDictionary(x => x.Build(), x => x.InterfaceTypes.Concat(new[] { x.ImplementationType }).ToList());
-            var registry = BuildRegistry(bindings);
-            ValidateCircularDependencies(bindings, registry);
+            var registry = BuildRegistry(data);
+            ValidateCircularDependencies(data, registry);
             return registry;
         }
 
-        Registry BuildRegistry(Dictionary<Binding, List<Type>> bindings) {
-            var data = bindings
+        Registry BuildRegistry(Dictionary<Binding, List<Type>> data) {
+            var bindings = data
                 .SelectMany(x => x.Value.Select(t => (t, x: x.Key)))
                 .GroupBy(x => x.t, x => x.x)
                 .ToDictionary(x => x.Key, x => x.ToList());
-            data = registry.Data
-                .Concat(data)
+            bindings = registry.Bindings
+                .Concat(bindings)
                 .GroupBy(x => x.Key, x => x.Value)
                 .ToDictionary(x => x.Key, x => x.SelectMany(x => x).ToList());
-            return new Registry(data);
+            return new Registry(bindings);
         }
 
-        void ValidateCircularDependencies(Dictionary<Binding, List<Type>> bindings, Registry registry) {
-            foreach (var binding in bindings) {
-                var dependency = new DependencyInfo(binding.Key, binding.Value.Last());
+        void ValidateCircularDependencies(Dictionary<Binding, List<Type>> data, Registry registry) {
+            foreach (var (binding, types) in data) {
+                var dependency = new DependencyInfo(binding, types.Last());
                 var dependencies = new Stack<DependencyInfo>();
                 ValidateCircularDependencies(dependency, registry, dependencies);
             }

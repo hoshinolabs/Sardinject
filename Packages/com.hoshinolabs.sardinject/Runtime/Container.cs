@@ -23,37 +23,33 @@ namespace HoshinoLabs.Sardinject {
         }
 
         internal object ResolveOrId(Type type, object id) {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)) {
+            if (type.IsEnumerable()) {
                 var elementType = type.GenericTypeArguments.First();
                 return Registry.GetBindings(elementType)
                     .Where(x => id == null || id.Equals(x.Id))
-                    .Select(x => Resolve(x))
+                    .Select(x => x.Resolve(elementType, this))
                     .Cast(elementType);
             }
             if (type.IsArray) {
                 var elementType = type.GetElementType();
                 return Registry.GetBindings(elementType)
                     .Where(x => id == null || id.Equals(x.Id))
-                    .Select(x => Resolve(x))
+                    .Select(x => x.Resolve(elementType, this))
                     .Cast(elementType)
                     .ToArray(elementType);
             }
             var binding = Registry.GetBindings(type)
-                .Reverse()
                 .Where(x => id == null || id.Equals(x.Id))
+                .Reverse()
                 .FirstOrDefault();
             if (binding == null) {
                 throw new SardinjectException($"Unable to resolve for type `{type.FullName}`.");
             }
-            return Resolve(binding);
+            return binding.Resolve(type, this);
         }
 
-        internal object Resolve(Binding binding) {
-            return binding.Resolver.Resolve(this);
-        }
-
-        internal object Resolve(IResolver resolver) {
-            return cache.GetOrAdd(resolver, () => resolver.Resolve(this));
+        internal object Resolve(IBindingResolver resolver, Type type) {
+            return cache.GetOrAdd(resolver, () => resolver.Resolve(type, this));
         }
 
         internal object ResolveOrParameterOrId(string name, Type type, object id, IReadOnlyDictionary<object, IResolver> parameters) {

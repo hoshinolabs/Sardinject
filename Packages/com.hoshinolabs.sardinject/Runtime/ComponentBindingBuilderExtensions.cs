@@ -70,13 +70,24 @@ namespace HoshinoLabs.Sardinject {
             return (ComponentBindingBuilder)BindingBuilderExtensions.WithId(self, id);
         }
 
-        internal static ComponentBindingBuilder EnsureBindingResolved(this ComponentBindingBuilder self, ContainerBuilder builder) {
-            var resolver = new Lazy<IResolver>();
+        internal static ComponentBindingBuilder EnsureBindingResolved(this ComponentBindingBuilder self, Type type, ContainerBuilder builder) {
+            var resolver = new Lazy<IBindingResolver>();
             self.OnBindingBuilt += (binding) => {
                 resolver = new(binding.Resolver);
             };
             builder.OnContainerBuilt += (container) => {
-                resolver.Value.Resolve(container);
+                resolver.Value.Resolve(type, container);
+            };
+            return self;
+        }
+
+        internal static ComponentBindingBuilder EnsureBindingResolved<T>(this ComponentBindingBuilder self, ContainerBuilder builder) {
+            var resolver = new Lazy<IBindingResolver>();
+            self.OnBindingBuilt += (binding) => {
+                resolver = new(binding.Resolver);
+            };
+            builder.OnContainerBuilt += (container) => {
+                resolver.Value.Resolve(typeof(T), container);
             };
             return self;
         }

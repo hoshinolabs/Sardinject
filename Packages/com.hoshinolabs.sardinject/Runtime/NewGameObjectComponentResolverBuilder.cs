@@ -15,7 +15,7 @@ namespace HoshinoLabs.Sardinject {
             this.destination = destination;
         }
 
-        public IResolver Build() {
+        public IBindingResolver Build() {
             var injector = InjectorCache.GetOrBuild(type);
             return new NewGameObjectComponentResolver(type, gameObjectName, destination, injector, Parameters);
         }

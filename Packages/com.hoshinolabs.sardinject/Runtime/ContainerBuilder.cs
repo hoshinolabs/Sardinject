@@ -1,7 +1,7 @@
 using System;
 
 namespace HoshinoLabs.Sardinject {
-    public class ContainerBuilder {
+    public sealed class ContainerBuilder {
         readonly RegistryBuilder registryBuilder = new();
 
         public event Action<Container> OnContainerPreBuilt;

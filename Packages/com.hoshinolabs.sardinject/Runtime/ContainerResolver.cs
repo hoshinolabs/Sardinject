@@ -1,15 +1,17 @@
+using System;
+
 namespace HoshinoLabs.Sardinject {
-    public sealed class ContainerResolver : IResolver {
-        Container container;
+    public sealed class ContainerResolver : IBindingResolver {
+        public Container Container { get; private set; }
 
         public ContainerResolver(ContainerBuilder containerBuilder) {
             containerBuilder.OnContainerPreBuilt += (container) => {
-                this.container = container;
+                Container = container;
             };
         }
 
-        public object Resolve(Container _) {
-            return container;
+        public object Resolve(Type type, Container container) {
+            return Container;
         }
     }
 }

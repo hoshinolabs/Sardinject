@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    public sealed class ExistenceComponentResolver : IResolver {
+    public sealed class ExistenceComponentResolver : IBindingResolver {
         public readonly object Instance;
         public readonly ComponentDestination Destination;
         public readonly Injector Injector;
@@ -15,7 +16,7 @@ namespace HoshinoLabs.Sardinject {
             Parameters = parameters;
         }
 
-        public object Resolve(Container container) {
+        public object Resolve(Type type, Container container) {
             if (!typeof(Component).IsAssignableFrom(Instance.GetType())) {
                 throw new SardinjectException($"{Instance.GetType()} is not a Component.");
             }

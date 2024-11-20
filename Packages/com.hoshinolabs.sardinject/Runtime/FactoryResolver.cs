@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 
 namespace HoshinoLabs.Sardinject {
-    public sealed class FactoryResolver : IResolver {
+    public sealed class FactoryResolver : IBindingResolver {
         public readonly IResolver Resolver;
         public readonly Injector Injector;
         public readonly IReadOnlyDictionary<object, IResolver> Parameters;
@@ -12,7 +13,7 @@ namespace HoshinoLabs.Sardinject {
             Parameters = parameters;
         }
 
-        public object Resolve(Container container) {
+        public object Resolve(Type type, Container container) {
             var instance = Resolver.Resolve(container);
             Injector.Inject(instance, container, Parameters);
             return instance;

@@ -13,7 +13,7 @@ namespace HoshinoLabs.Sardinject {
             this.instance = instance;
         }
 
-        public IResolver Build() {
+        public IBindingResolver Build() {
             var injector = InjectorCache.GetOrBuild(type);
             return new ExistenceInstanceResolver(instance, injector, Parameters);
         }

@@ -17,7 +17,7 @@ namespace HoshinoLabs.Sardinject {
 
         public static ComponentBindingBuilder RegisterEntryPoint<T>(this ContainerBuilder self, Lifetime lifetime) where T : Component {
             return self.RegisterComponent<T>(lifetime)
-                .EnsureBindingResolved(self);
+                .EnsureBindingResolved<T>(self);
         }
 
         public static ComponentBindingBuilder RegisterComponent<T>(this ContainerBuilder self, Lifetime lifetime) where T : Component {
@@ -32,7 +32,7 @@ namespace HoshinoLabs.Sardinject {
             var destination = new ComponentDestination();
             var resolverBuilder = new ExistenceComponentResolverBuilder(component.GetType(), component, destination).OverrideScopeIfNeeded(self, Lifetime.Cached);
             var builder = new ComponentBindingBuilder(component.GetType(), resolverBuilder, destination)
-                .EnsureBindingResolved(self);
+                .EnsureBindingResolved<T>(self);
             self.Register(builder);
             return builder;
         }
@@ -41,7 +41,7 @@ namespace HoshinoLabs.Sardinject {
             var destination = new ComponentDestination();
             var resolverBuilder = new FindComponentResolverBuilder(type, destination).OverrideScopeIfNeeded(self, Lifetime.Cached);
             var builder = new ComponentBindingBuilder(type, resolverBuilder, destination)
-                .EnsureBindingResolved(self);
+                .EnsureBindingResolved(type, self);
             self.Register(builder);
             return builder;
         }
@@ -50,7 +50,7 @@ namespace HoshinoLabs.Sardinject {
             var destination = new ComponentDestination();
             var resolverBuilder = new FindComponentResolverBuilder(typeof(T), destination).OverrideScopeIfNeeded(self, Lifetime.Cached);
             var builder = new ComponentBindingBuilder(typeof(T), resolverBuilder, destination)
-                .EnsureBindingResolved(self);
+                .EnsureBindingResolved<T>(self);
             self.Register(builder);
             return builder;
         }

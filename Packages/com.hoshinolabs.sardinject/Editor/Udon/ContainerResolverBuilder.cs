@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace HoshinoLabs.Sardinject.Udon {
     internal sealed class ContainerResolverBuilder : IResolverBuilder {
-        public Dictionary<object, IResolver> Parameters { get; } = null;
+        public Dictionary<object, IResolver> Parameters { get; } = new();
 
         readonly ComponentDestination destination;
 
@@ -10,7 +10,7 @@ namespace HoshinoLabs.Sardinject.Udon {
             this.destination = destination;
         }
 
-        public IResolver Build() {
+        public IBindingResolver Build() {
             return new ContainerResolver(destination);
         }
     }

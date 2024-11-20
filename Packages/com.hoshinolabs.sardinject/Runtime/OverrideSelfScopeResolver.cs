@@ -1,13 +1,15 @@
-namespace HoshinoLabs.Sardinject {
-    public sealed class OverrideSelfScopeResolver : IResolver {
-        public readonly IResolver Resolver;
+using System;
 
-        public OverrideSelfScopeResolver(IResolver resolver) {
+namespace HoshinoLabs.Sardinject {
+    public sealed class OverrideSelfScopeResolver : IBindingResolver {
+        public readonly IBindingResolver Resolver;
+
+        public OverrideSelfScopeResolver(IBindingResolver resolver) {
             Resolver = resolver;
         }
 
-        public object Resolve(Container container) {
-            return container.Resolve(Resolver);
+        public object Resolve(Type type, Container container) {
+            return container.Resolve(Resolver, type);
         }
     }
 }

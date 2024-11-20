@@ -3,14 +3,18 @@ using System;
 namespace HoshinoLabs.Sardinject {
     public static class ContainerBuilderExtensions {
         public static BindingBuilder Register(this ContainerBuilder self, Type type, Lifetime lifetime) {
-            var resolverBuilder = new InstanceResolverBuilder(type).OverrideScopeIfNeeded(self, lifetime);
+            var resolverBuilder = type.IsGenericTypeDefinition
+                ? new OpenGenericInstanceResolverBuilder().OverrideScopeIfNeeded(self, lifetime)
+                : new InstanceResolverBuilder(type).OverrideScopeIfNeeded(self, lifetime);
             var builder = new BindingBuilder(type, resolverBuilder);
             self.Register(builder);
             return builder;
         }
 
         public static BindingBuilder Register<T>(this ContainerBuilder self, Lifetime lifetime) {
-            var resolverBuilder = new InstanceResolverBuilder(typeof(T)).OverrideScopeIfNeeded(self, lifetime);
+            var resolverBuilder = typeof(T).IsGenericTypeDefinition
+                ? new OpenGenericInstanceResolverBuilder().OverrideScopeIfNeeded(self, lifetime)
+                : new InstanceResolverBuilder(typeof(T)).OverrideScopeIfNeeded(self, lifetime);
             var builder = new BindingBuilder(typeof(T), resolverBuilder);
             self.Register(builder);
             return builder;

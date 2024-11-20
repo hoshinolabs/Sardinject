@@ -10,7 +10,7 @@ namespace HoshinoLabs.Sardinject {
             this.resolverBuilder = resolverBuilder;
         }
 
-        public IResolver Build() {
+        public IBindingResolver Build() {
             return new OverrideSelfScopeResolver(resolverBuilder.Build());
         }
     }

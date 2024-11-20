@@ -11,7 +11,7 @@ namespace HoshinoLabs.Sardinject {
             this.type = type;
         }
 
-        public IResolver Build() {
+        public IBindingResolver Build() {
             var injector = InjectorCache.GetOrBuild(type);
             return new InstanceResolver(injector, Parameters);
         }

@@ -16,7 +16,7 @@ namespace HoshinoLabs.Sardinject {
             this.destination = destination;
         }
 
-        public IResolver Build() {
+        public IBindingResolver Build() {
             var injector = InjectorCache.GetOrBuild(type);
             return new NewPrefabComponentResolver(type, prefab, destination, injector, Parameters);
         }

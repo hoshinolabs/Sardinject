@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoshinoLabs.Sardinject {
-    public sealed class NewPrefabComponentResolver : IResolver {
+    public sealed class NewPrefabComponentResolver : IBindingResolver {
         public readonly Type ComponentType;
         public readonly GameObject Prefab;
         public readonly ComponentDestination Destination;
@@ -18,7 +18,7 @@ namespace HoshinoLabs.Sardinject {
             Parameters = parameters;
         }
 
-        public object Resolve(Container container) {
+        public object Resolve(Type type, Container container) {
             var active = Prefab.activeSelf;
             if (active) {
                 Prefab.SetActive(false);

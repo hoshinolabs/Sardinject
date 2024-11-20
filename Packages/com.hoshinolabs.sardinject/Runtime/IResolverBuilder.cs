@@ -4,6 +4,10 @@ namespace HoshinoLabs.Sardinject {
     public interface IResolverBuilder {
         Dictionary<object, IResolver> Parameters { get; }
 
-        IResolver Build();
+        IBindingResolver Build();
+    }
+
+    public interface IGenericResolverBuilder : IResolverBuilder {
+
     }
 }
