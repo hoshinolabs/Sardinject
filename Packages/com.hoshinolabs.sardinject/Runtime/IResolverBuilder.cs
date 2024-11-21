@@ -6,8 +6,4 @@ namespace HoshinoLabs.Sardinject {
 
         IBindingResolver Build();
     }
-
-    public interface IGenericResolverBuilder : IResolverBuilder {
-
-    }
 }
