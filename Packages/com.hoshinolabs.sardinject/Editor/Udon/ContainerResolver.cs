@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor;
@@ -26,7 +27,7 @@ namespace HoshinoLabs.Sardinject.Udon {
 
             var instance = container.Scope(builder => {
                 builder.RegisterComponentOnNewGameObject(
-                    Container.ImplementationType,
+                    typeof(Container).GetCustomAttribute<ImplementationTypeAttribute>().ImplementationType,
                     Lifetime.Transient,
                     $"{typeof(Container).Name} [{container.GetHashCode():x8}]"
                 )
