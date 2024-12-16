@@ -12,9 +12,7 @@ namespace HoshinoLabs.Sardinject {
         }
 
         public static BindingBuilder Register<T>(this ContainerBuilder self, Lifetime lifetime) {
-            var resolverBuilder = typeof(T).IsGenericTypeDefinition
-                ? new OpenGenericInstanceResolverBuilder().OverrideScopeIfNeeded(self, lifetime)
-                : new InstanceResolverBuilder(typeof(T)).OverrideScopeIfNeeded(self, lifetime);
+            var resolverBuilder = new InstanceResolverBuilder(typeof(T)).OverrideScopeIfNeeded(self, lifetime);
             var builder = new BindingBuilder(typeof(T), resolverBuilder);
             self.Register(builder);
             return builder;

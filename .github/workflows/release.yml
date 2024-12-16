@@ -52,9 +52,15 @@ jobs:
       # Copy required files
       - name: Copy Required Files
         run: |
-          cp -f README.md Packages/com.hoshinolabs.sardinject/README.md
-          cp -f README_en.md Packages/com.hoshinolabs.sardinject/README_en.md
-          cp -f LICENSE Packages/com.hoshinolabs.sardinject/LICENSE.md
+          cp -f README.md ${{ env.packagePath }}/README.md
+          cp -f README_en.md ${{ env.packagePath }}/README_en.md
+          cp -f LICENSE ${{ env.packagePath }}/LICENSE.md
+      
+      # Remove unused files
+      - name: Remove Unused Files
+        run: |
+          rm -rf ${{ env.packagePath }}/Tests
+          rm -rf ${{ env.packagePath }}/Tests.meta
       
       # Configure the Environment Variables needed for releasing the Package
       - name: Set Environment Variables

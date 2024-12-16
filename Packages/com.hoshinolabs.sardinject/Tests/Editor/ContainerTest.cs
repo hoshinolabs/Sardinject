@@ -92,6 +92,10 @@ namespace HoshinoLabs.Sardinject.Tests {
 
         }
 
+        class Simple<T> : Simple {
+
+        }
+
         enum Kinds {
             Simple1,
             Simple2,
@@ -123,6 +127,15 @@ namespace HoshinoLabs.Sardinject.Tests {
             builder.Register<Simple>(Lifetime.Transient);
             var container = builder.Build();
             Assert.DoesNotThrow(() => container.Resolve<Simple>());
+        }
+
+        // 汎用型で解決,登録済みタイプ,スローされないべき
+        [Test]
+        public void Resolve_RegisterByTypeOfOpenGeneric_ShouldNotThrow() {
+            var builder = new ContainerBuilder();
+            builder.Register(typeof(Simple<>), Lifetime.Transient);
+            var container = builder.Build();
+            Assert.DoesNotThrow(() => container.Resolve<Simple<int>>());
         }
 
         // 配列型で解決,未登録配列タイプ,空の配列を返す
@@ -309,6 +322,24 @@ namespace HoshinoLabs.Sardinject.Tests {
             Assert.AreNotEqual(simple1, simple2);
         }
 
+        // 汎用型で解決,一時タイプで,常に新しい値を返す
+        [Test]
+        public void Resolve_AsTransientFromLifetimeOfOpenGeneric_ShouldReturnAlwaysANewInstance() {
+            var builder = new ContainerBuilder();
+            builder.Register(typeof(Simple<>), Lifetime.Transient);
+            var container = builder.Build();
+            var simple1 = container.Resolve<Simple<int>>();
+            var simple2 = container.Resolve<Simple<int>>();
+            Assert.AreNotEqual(simple1, simple2);
+            var simple3 = container.Resolve<Simple<uint>>();
+            var simple4 = container.Resolve<Simple<uint>>();
+            Assert.AreNotEqual(simple3, simple1);
+            Assert.AreNotEqual(simple3, simple2);
+            Assert.AreNotEqual(simple4, simple1);
+            Assert.AreNotEqual(simple4, simple2);
+            Assert.AreNotEqual(simple3, simple4);
+        }
+
         // 型で解決,一時タイプで,常に新しい値を返すが階層は使わない
         [Test]
         public void Resolve_AsTransientFromLifetime_ShouldReturnAlwaysANewInstanceButDoesNotHierarchy() {
@@ -349,6 +380,24 @@ namespace HoshinoLabs.Sardinject.Tests {
             var simple1 = container.Resolve<Simple>();
             var simple2 = container.Resolve<Simple>();
             Assert.AreEqual(simple1, simple2);
+        }
+
+        // 汎用型で解決,キャッシュタイプで,常に同じ値を返す
+        [Test]
+        public void Resolve_AsCachedFromLifetimeOfOpenGeneric_ShouldReturnAlwaysSameInstance() {
+            var builder = new ContainerBuilder();
+            builder.Register(typeof(Simple<>), Lifetime.Cached);
+            var container = builder.Build();
+            var simple1 = container.Resolve<Simple<int>>();
+            var simple2 = container.Resolve<Simple<int>>();
+            Assert.AreEqual(simple1, simple2);
+            var simple3 = container.Resolve<Simple<uint>>();
+            var simple4 = container.Resolve<Simple<uint>>();
+            Assert.AreNotEqual(simple3, simple1);
+            Assert.AreNotEqual(simple3, simple2);
+            Assert.AreNotEqual(simple4, simple1);
+            Assert.AreNotEqual(simple4, simple2);
+            Assert.AreEqual(simple3, simple4);
         }
 
         // 型で解決,キャッシュタイプで,階層間でできるだけ常に同じ値を返す

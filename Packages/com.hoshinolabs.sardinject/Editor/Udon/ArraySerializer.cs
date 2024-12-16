@@ -60,7 +60,7 @@ namespace HoshinoLabs.Sardinject.Udon {
         }
 
         public override Type GetUdonStorageType() {
-            return typeof(T[]);
+            return typeof(object[]);
         }
     }
 }
