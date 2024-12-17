@@ -16,6 +16,7 @@ namespace HoshinoLabs.Sardinject {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void OnSubsystemRegistration() {
             projectContainer = BuildProjectContainer();
+            OnProjectContainerBuilt?.Invoke(projectContainer);
 
             SceneInjector.OnSceneLoaded -= SceneLoaded;
             SceneInjector.OnSceneLoaded += SceneLoaded;
@@ -24,6 +25,7 @@ namespace HoshinoLabs.Sardinject {
         static void SceneLoaded(Scene scene) {
             var sceneContainer = BuildSceneContainer(projectContainer, scene);
             BuildHierarchyContainers(sceneContainer, scene);
+            OnSceneContainerBuilt?.Invoke(scene, sceneContainer);
         }
 
         static Container BuildProjectContainer() {
@@ -36,7 +38,6 @@ namespace HoshinoLabs.Sardinject {
             }
             Installers?.Invoke(builder);
             var container = builder.Build();
-            OnProjectContainerBuilt?.Invoke(container);
             Logger.Log($"Build of project container finished in {sw.Elapsed.TotalMilliseconds}ms");
             return container;
         }
@@ -56,7 +57,6 @@ namespace HoshinoLabs.Sardinject {
                 }
                 Installers?.Invoke(builder);
             });
-            OnSceneContainerBuilt?.Invoke(scene, container);
             Logger.Log($"Build of scene container finished in {sw.Elapsed.TotalMilliseconds}ms");
             return container;
         }
