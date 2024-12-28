@@ -1,7 +1,7 @@
 <p><img src="Graphics/logo.png" width="500"></p>
 
 ![](https://img.shields.io/badge/unity-2022.3+-000.svg)
-[![Releases](https://img.shields.io/github/release/hoshinolabs/Sardinject.svg)](https://github.com/hoshinolabs/Sardinject/releases)
+[![Releases](https://img.shields.io/github/release/ikuko/Sardinject.svg)](https://github.com/ikuko/Sardinject/releases)
 
 Sardinject is a simple DI (Dependency Injection) library for <a href="https://unity.com/">Unity C#</a>, <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon(U#)</a>.  
   
@@ -34,7 +34,7 @@ vpm add com.hoshinolabs.vrchat.sardinject
 
 ### Install manually (using .unitypackage)
 
-1. Download the .unitypackage from [releases](https://github.com/hoshinolabs-vrchat/Sardinject/releases) page.
+1. Download the .unitypackage from [releases](https://github.com/ikuko/Sardinject/releases) page.
 2. Open .unitypackage
 
 ### Install manually (UPM)
@@ -42,13 +42,13 @@ vpm add com.hoshinolabs.vrchat.sardinject
 以下を UPM でインストールします。
 
 ```
-https://github.com/hoshinolabs/Sardinject.git?path=Packages/com.hoshinolabs.sardinject
+https://github.com/ikuko/Sardinject.git?path=Packages/com.hoshinolabs.sardinject
 ```
 
 Sardinject はリリースタグを使用するので以下のようにバージョンを指定できます。
 
 ```
-https://github.com/hoshinolabs/Sardinject.git?path=Packages/com.hoshinolabs.sardinject#1.0.0
+https://github.com/ikuko/Sardinject.git?path=Packages/com.hoshinolabs.sardinject#1.0.0
 ```
 
 ## Basic Usage
