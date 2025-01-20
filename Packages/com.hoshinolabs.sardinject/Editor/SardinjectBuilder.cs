@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace HoshinoLabs.Sardinject {
     internal sealed class SardinjectBuilder : IVRCSDKBuildProcessScene {
-        public override int callbackOrder => 1;
+        public override int callbackOrder => 0;
 
         public override void OnBuildProcessScene(Scene scene) {
             var onSubsystemRegistrationMethod = typeof(UnityInjector).GetMethod("OnSubsystemRegistration", BindingFlags.Static | BindingFlags.NonPublic);
