@@ -72,6 +72,10 @@ const config: Config = {
           label: "Document",
         },
         {
+          type: "localeDropdown",
+          position: "left",
+        },
+        {
           href: "https://github.com/ikuko/Sardinject",
           label: "GitHub",
           position: "right",
