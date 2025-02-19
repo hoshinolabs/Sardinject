@@ -1,23 +1,15 @@
-# Sardinject
+<p><img src="Graphics/logo.png" width="500"></p>
 
 ![](https://img.shields.io/badge/unity-2022.3+-000.svg)
-[![Releases](https://img.shields.io/github/release/hoshinolabs-vrchat/Sardinject.svg)](https://github.com/hoshinolabs-vrchat/Sardinject/releases)
+[![Releases](https://img.shields.io/github/release/ikuko/Sardinject.svg)](https://github.com/ikuko/Sardinject/releases)
 
-The simple DI (Dependency Injection) for VRChat.
-
-- **No CPU time required at runtime:**: No CPU time is needed at runtime as most processing is resolved in the editor.
-- **Runs on Udon Runtime:**: Limited operation at Udon runtime if needed.
+Sardinject is a simple DI (Dependency Injection) library for <a href="https://unity.com/">Unity C#</a>, <a href="https://udonsharp.docs.vrchat.com/">VRChat Udon(U#)</a>.  
 
 ## Features
 
-- Flexible scoping
-  - Scoping by Hierarchy or Code
-- Inject with ID parameter
-- Multiple instance Resolve
-
 ## Documentation
 
-View on [GitHub Pages](https://sardinject.github.io)
+View on [GitHub Pages](https://ikuko.github.io/Sardinject/)
 
 ## Installation
 
@@ -35,13 +27,13 @@ View on [GitHub Pages](https://sardinject.github.io)
 ```bash
 vpm add repo https://vpm.hoshinolabs.com/vpm.json
 cd /your-unity-project
-vpm add com.hoshinolabs.vrchat.sardinject
+vpm add com.hoshinolabs.sardinject
 ```
 
 ### Install manually (using .unitypackage)
 
-1. Download the .unitypackage from [releases](https://github.com/hoshinolabs-vrchat/Sardinject/releases) page.
-2. Open com.hoshinolabs.vrchat.sardinject-vx.x.x.unitypackage
+1. Download the .unitypackage from [releases](https://github.com/ikuko/Sardinject/releases) page.
+2. Open .unitypackage
 
 ## Basic Usage
 

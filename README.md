@@ -11,7 +11,7 @@ Sardinject は <a href="https://unity.com/">Unity C#</a>、<a href="https://udon
 
 ## Documentation
 
-~~View on [GitHub Pages](https://sardinject.github.io)~~
+View on [GitHub Pages](https://ikuko.github.io/Sardinject/)
 
 ## Installation
 
@@ -29,7 +29,7 @@ Sardinject は <a href="https://unity.com/">Unity C#</a>、<a href="https://udon
 ```bash
 vpm add repo https://vpm.hoshinolabs.com/vpm.json
 cd /your-unity-project
-vpm add com.hoshinolabs.vrchat.sardinject
+vpm add com.hoshinolabs.sardinject
 ```
 
 ### Install manually (using .unitypackage)
